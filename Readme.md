@@ -12,7 +12,7 @@ When the game starts, the adventurer can start to move. Each time, it can only m
 ### Princess:
 When the game starts, the princess will be some place in the game. It will never move. All it can do is to wait for adventurer
 
-### Monster and Rock
+### Monster and Rock:
 As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster(the Rock can not be destroyed).
 
 
