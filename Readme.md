@@ -14,13 +14,7 @@ When the game starts, the princess will be some place in the game. It will never
 
 As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster(the Rock can not be destroyed).
 
-/*
-## Monster: 
-In the path of saving the kidnapped princess, if the adventurer meets the monster, there are two ways to do:  1. Killing the monster, but it cost a few steps.  2: Going another way to avoid it
 
-## Rock:
-It can not be destroyed, but the adventurer can push it forward. It will cost an adventurer a step for an adventurer to move it. 
-*/
 
 # Possible libraries (Just initial thoughts. The actual use of libraries may vary): 
 
@@ -32,7 +26,7 @@ Brick library   <br />
 
 Shanchuan You, shy228@ucsd.edu, shy228 <br />
 Guoyi Li, gul008@ucsd.edu , 3milesWind  <br />
-Mingyang Chen,                          <br />
+Mingyang Chen, mic016@ucsd.edu, MY-Chen2000                          <br />
 Jiaen Yu, jiy037@ucsd.edu, yujiaen1999  <br />
 
 # Github Repository Link: 
