@@ -24,9 +24,9 @@ It can not be destroyed, but the adventurer can push it forward. It will cost an
 
 # Possible libraries (Just initial thoughts. The actual use of libraries may vary): 
 
-Control library 
-Data library
-Brick library
+Control library <br />
+Data library    <br />
+Brick library   <br />
 
 # Team members (Name, Email, Github_id): 
 
