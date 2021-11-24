@@ -1,34 +1,34 @@
-# snake
+CSE230 Project Proposal
 
-A terminal interface for Snake. This is kind of a toy program, written as a demonstration of the
-[brick](https://hackage.haskell.org/package/brick-0.18) library.
+# Descriptions: 
 
-<p align="center">
-  <img src="./docs/img/example.gif"/>
-</p>
+You are an adventurer. You need to set off from the castle to save the kidnapped princess. Because the situation is very urgent, you have to get there in a certain number of steps. You might meet monsters and rocks on the way. You can kill monsters and move rocks(rocks can't be destroyed), but these operations will also consume a few steps. If you fail to save the princess before using up all the steps, then you lose, otherwise you win. 
 
-It is part of my [Introduction to Brick](https://samtay.github.io/posts/introduction-to-brick)
-tutorial. Feel free to leave issues here or on
-[samtay/samtay.github.io](https://github.com/samtay/samtay.github.io)
-if you spot any issues or want to leave feedback.
+In the game, there will be four elements: adventurer(you), princess, monster and rocks. 
 
-## installation
-Installation on MacOS can be accomplished via homebrew:
-```shell
-brew install samtay/tui/snake
-```
-Arch Linux users can install from the [AUR](https://aur.archlinux.org/packages/snake-terminal-git/):
-```shell
-yay -S snake-terminal-git # or yaourt -S snake-terminal-git, etc.
-```
-Others can install from source with [stack](https://docs.haskellstack.org/en/stable/README/#how-to-install):
-```shell
-git clone https://github.com/samtay/snake.git
-cd snake
-stack install snake
-```
-If you are on Debian and want to install via package manager, feel free to open an issue and I'll try to get around to it.
+### Adventurer:
+When the game starts, the adventurer can start to move. Each time, it can only move one step. 
 
-## playing the game
+### Princess:
+When the game starts, the princess will be some place in the game. It will never move. All it can do is to wait for adventurer
 
-After launching the game, press any of the arrow keys or the letters 'k', 'j', 'l', or 'h' to start the game.
+### Monster and Rock:
+As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster(the Rock can not be destroyed).
+
+
+
+# Possible libraries (Just initial thoughts. The actual use of libraries may vary): 
+
+Control library <br />
+Data library    <br />
+Brick library   <br />
+
+# Team members (Name, Email, Github_id): 
+
+Shanchuan You, shy228@ucsd.edu, shy228 <br />
+Guoyi Li, gul008@ucsd.edu , 3milesWind  <br />
+Mingyang Chen, mic016@ucsd.edu, MY-Chen2000                          <br />
+Jiaen Yu, jiy037@ucsd.edu, yujiaen1999  <br />
+
+# Github Repository Link: 
+https://github.com/3milesWind/CSE230_FinalProject
