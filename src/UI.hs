@@ -47,9 +47,9 @@ data Cell = Snake | Food | Empty
 -- App definition
 
 app :: App Game Tick Name
-app = App { appDraw = drawUI
+app = App { appDraw = drawBoard
           , appChooseCursor = neverShowCursor
-          , appHandleEvent = handleEvent
+          , appHandleEvent = testHandle
           , appStartEvent = return
           , appAttrMap = const theMap
           }
@@ -66,6 +66,9 @@ main = do
   void $ customMain initialVty builder (Just chan) app g
 
 -- Handling events
+testHandle :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
+testHandle g _ = continue g
+
 
 handleEvent :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
 handleEvent g (AppEvent Tick)                       = continue $ step g
@@ -87,6 +90,10 @@ handleEvent g _                                     = continue g
 drawUI :: Game -> [Widget Name]
 drawUI g =
   [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid g ]
+
+drawBoard :: Game -> [Widget Name]
+drawBoard g = [drawGrid g]
+
 
 drawStats :: Game -> Widget Name
 drawStats g = hLimit 11
