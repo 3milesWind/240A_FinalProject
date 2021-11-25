@@ -25,12 +25,10 @@ import System.Random (Random(..), newStdGen)
 
 type Coord = V2 Int
 
-type Snake = Seq Coord
-
 type Rock = Seq Coord
 
 data Game2 = Game2
-  { _d :: MyDirection       -- ^ direction
+  { _d      :: MyDirection       -- ^ direction
   , _player :: Coord         -- ^ the location of the player will be modified via I/O
   } deriving (Show)
 
