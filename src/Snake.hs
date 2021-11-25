@@ -41,6 +41,10 @@ type Coord = V2 Int
 
 type Snake = Seq Coord
 
+type Rock = Seq Coord
+
+
+
 data Stream a = a :| Stream a
   deriving (Show)
 
@@ -51,6 +55,7 @@ data Direction
   | West
   deriving (Eq, Show)
 
+--makeLenses ''Game2
 makeLenses ''Game
 
 -- Constants
@@ -143,6 +148,8 @@ initGame = do
         , _locked = False
         }
   return $ execState nextFood g
+
+
 
 fromList :: [a] -> Stream a
 fromList = foldr (:|) (error "Streams must be infinite")

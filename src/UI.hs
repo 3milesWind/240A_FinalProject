@@ -7,7 +7,7 @@ import Control.Concurrent (threadDelay, forkIO)
 import Data.Maybe (fromMaybe)
 
 import Snake
-
+import MyGame
 import Brick
   ( App(..), AttrMap, BrickEvent(..), EventM, Next, Widget
   , customMain, neverShowCursor
@@ -44,14 +44,16 @@ type Name = ()
 
 data Cell = Snake | Food | Empty
 
+data Cell2 = Empty2 | Player
+
 -- App definition
 
-app :: App Game Tick Name
-app = App { appDraw = drawBoard
+app :: App Game2 Tick Name
+app = App { appDraw = drawBoard2
           , appChooseCursor = neverShowCursor
           , appHandleEvent = testHandle
           , appStartEvent = return
-          , appAttrMap = const theMap
+          , appAttrMap = const theMap2
           }
 
 main :: IO ()
@@ -60,13 +62,13 @@ main = do
   forkIO $ forever $ do
     writeBChan chan Tick
     threadDelay 100000 -- decides how fast your game moves
-  g <- initGame
+  g <- initGame2
   let builder = V.mkVty V.defaultConfig
   initialVty <- builder
   void $ customMain initialVty builder (Just chan) app g
 
 -- Handling events
-testHandle :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
+testHandle :: Game2 -> BrickEvent Name Tick -> EventM Name (Next Game2)
 testHandle g _ = continue g
 
 
@@ -94,6 +96,8 @@ drawUI g =
 drawBoard :: Game -> [Widget Name]
 drawBoard g = [drawGrid g]
 
+drawBoard2 :: Game2 -> [Widget Name]
+drawBoard2 g = [drawGrid2 g]
 
 drawStats :: Game -> Widget Name
 drawStats g = hLimit 11
@@ -115,15 +119,18 @@ drawGameOver dead =
      else emptyWidget
 
 drawGrid :: Game -> Widget Name
-drawGrid g = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "Snake")
+drawGrid g = withBorderStyle BS.unicodeRounded
+  $ B.borderWithLabel (str "Board")
   $ vBox rows
   where
-    rows         = [hBox $ cellsInRow r | r <- [height-1,height-2..0]]
+    --for each row
+    rows         = [hBox (cellsInRow r) | r <- [height-1,height-2..0]]
+    --forw each col
     cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
+    --for each coordinate decide to draw snake/food/empty
     drawCoord    = drawCell . cellAt
     cellAt c
-      | c `elem` g ^. snake = Snake
+      | c `elem`  g ^. snake = Snake
       | c == g ^. food      = Food
       | otherwise           = Empty
 
@@ -131,6 +138,23 @@ drawCell :: Cell -> Widget Name
 drawCell Snake = withAttr snakeAttr cw
 drawCell Food  = withAttr foodAttr cw
 drawCell Empty = withAttr emptyAttr cw
+
+drawGrid2 :: Game2 -> Widget Name
+drawGrid2 g = withBorderStyle BS.unicodeBold
+  $ B.borderWithLabel (str "MyGame")
+  $ vBox rows
+  where
+    rows = [hBox (cellsInRow r) | r <- [height - 1, height - 2 .. 0]]
+    cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
+    drawCoord = drawCell2 . cellAt
+    cellAt cell
+      | cell == g ^. player     = Player
+      | otherwise               = Empty2
+
+drawCell2 :: Cell2 -> Widget Name
+drawCell2 Empty2 = withAttr emptyAttr cw
+drawCell2 Player = withAttr playerAttr cw
+
 
 cw :: Widget Name
 cw = str "  "
@@ -142,6 +166,11 @@ theMap = attrMap V.defAttr
   , (gameOverAttr, fg V.red `V.withStyle` V.bold)
   ]
 
+theMap2 :: AttrMap
+theMap2 = attrMap V.defAttr
+  [ (playerAttr, V.red `on` V.red)
+  ]
+
 gameOverAttr :: AttrName
 gameOverAttr = "gameOver"
 
@@ -149,3 +178,6 @@ snakeAttr, foodAttr, emptyAttr :: AttrName
 snakeAttr = "snakeAttr"
 foodAttr = "foodAttr"
 emptyAttr = "emptyAttr"
+
+playerAttr :: AttrName
+playerAttr = "playerAttr"

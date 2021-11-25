@@ -32,3 +32,15 @@ Jiaen Yu, jiy037@ucsd.edu, yujiaen1999  <br />
 
 # Github Repository Link: 
 https://github.com/3milesWind/CSE230_FinalProject
+
+# Game design:
+Game {
+    _steps_remain :: Int
+    _princess :: Coord
+    _monster :: Coord
+    _rock :: Rock
+    _dir :: Direction
+    _dead :: Bool
+    _player :: Coord
+    
+}
