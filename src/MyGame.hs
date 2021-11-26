@@ -3,6 +3,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module MyGame
   ( initGame2
+  , moves
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
@@ -57,8 +58,8 @@ mywidth = 20
 
 initGame2 :: IO Game2
 initGame2 = do
-  let x = mywidth - 1
-      y = myheight - 1
+  let x = 0
+      y = 0
       g = Game2
         {
           _d = MySouth
@@ -71,6 +72,30 @@ initState = do
   s <- get
   put s
 
+moves :: MyDirection -> Game2 -> Game2
+moves MyNorth g = do
+  let (V2 x y) = g ^. player
+  if y >= myheight - 1 then g
+  else g & player %~ (\(V2 a b) -> (V2 a (b+1)))
+
+moves MyEast g = do
+  let (V2 x y) = g ^. player
+  if x >= mywidth - 1 then g
+  else g & player %~ (\(V2 a b) -> (V2 (a+1) b))
+
+moves MyWest g = do
+  let (V2 x y) = g ^. player
+  if x <= 0 then g
+  else g & player %~ (\(V2 a b) -> (V2 (a-1) b))
+
+moves MySouth g = do
+  let (V2 x y) = g ^. player
+  if y <= 0 then g
+  else g & player %~ (\(V2 a b) -> (V2 a (b-1)))
+
+moves _ g = g
+
+  
 
 fromList :: [a] -> Stream a
 fromList = foldr (:|) (error "Streams must be infinite")

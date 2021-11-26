@@ -51,7 +51,7 @@ data Cell2 = Empty2 | Player
 app :: App Game2 Tick Name
 app = App { appDraw = drawBoard2
           , appChooseCursor = neverShowCursor
-          , appHandleEvent = testHandle
+          , appHandleEvent = handleEvent2
           , appStartEvent = return
           , appAttrMap = const theMap2
           }
@@ -87,6 +87,12 @@ handleEvent g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
 handleEvent g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent g _                                     = continue g
 
+handleEvent2 :: Game2 -> BrickEvent Name Tick -> EventM Name (Next Game2)
+handleEvent2 g (VtyEvent (V.EvKey V.KUp []))         = continue $ moves MyNorth g
+handleEvent2 g (VtyEvent (V.EvKey V.KDown []))       = continue $ moves MySouth g
+handleEvent2 g (VtyEvent (V.EvKey V.KLeft []))       = continue $ moves MyWest g
+handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
+handleEvent2 g _                                     = continue g  
 -- Drawing
 
 drawUI :: Game -> [Widget Name]
