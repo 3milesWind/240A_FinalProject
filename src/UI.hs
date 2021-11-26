@@ -148,7 +148,7 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
     cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
     drawCoord = drawCell2 . cellAt
     cellAt cell
-      | cell == g ^. player     = Player
+      | cell == (g ^. player)     = Player
       | otherwise               = Empty2
 
 drawCell2 :: Cell2 -> Widget Name

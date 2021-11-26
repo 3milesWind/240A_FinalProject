@@ -6,6 +6,7 @@ module MyGame
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
+  , player, d
   ) where
 
 import Control.Applicative ((<|>))
@@ -25,11 +26,11 @@ import System.Random (Random(..), newStdGen)
 
 type Coord = V2 Int
 
-type Rock = Seq Coord
+--type Rock = Seq Coord
 
 data Game2 = Game2
   { _d      :: MyDirection       -- ^ direction
-  , _player :: Coord         -- ^ the location of the player will be modified via I/O
+  , _player :: Coord             -- ^ the location of the player will be modified via I/O
   } deriving (Show)
 
 
@@ -56,8 +57,8 @@ mywidth = 20
 
 initGame2 :: IO Game2
 initGame2 = do
-  let x = 0
-      y = 0
+  let x = mywidth - 1
+      y = myheight - 1
       g = Game2
         {
           _d = MySouth
