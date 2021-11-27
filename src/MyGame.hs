@@ -34,8 +34,8 @@ type Coord = V2 Int
 data Game2 = Game2
   { _d      :: MyDirection       -- ^ direction
   , _player :: Coord             -- ^ the location of the player will be modified via I/O
-  , _gameOver :: Bool
-  , _stepsRemain :: Int
+  , _gameOver :: Bool            -- ^ the bool value mark the game is live or dead
+  , _stepsRemain :: Int          -- ^ track the number of stepsRemain
   } deriving (Show)
 
 

@@ -103,7 +103,7 @@ drawUI g =
 
 drawStats :: Game2 -> Widget Name
 drawStats g = hLimit 11
-  $ vBox [ drawSteps2 (g ^. stepsRemain)
+  $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
          ]
 
@@ -116,6 +116,8 @@ drawSteps2 n = withBorderStyle BS.unicodeBold
   $ padAll 1
   $ str $ show n
 
+drawSteps :: Int -> Widget Name
+drawSteps n = withAttr steps $ C.hCenter $ str ("Steps" ++ (show n))
 
 drawGameOver2 :: Bool -> Widget Name
 drawGameOver2 dead =
@@ -161,3 +163,6 @@ emptyAttr = "emptyAttr"
 
 playerAttr :: AttrName
 playerAttr = "playerAttr"
+
+steps :: AttrName
+steps = "steps"
