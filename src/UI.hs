@@ -49,7 +49,7 @@ data Cell2 = Empty2 | Player
 -- App definition
 
 app :: App Game2 Tick Name
-app = App { appDraw = drawBoard2
+app = App { appDraw = drawUI
           , appChooseCursor = neverShowCursor
           , appHandleEvent = handleEvent2
           , appStartEvent = return
@@ -95,55 +95,35 @@ handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
 handleEvent2 g _                                     = continue g  
 -- Drawing
 
-drawUI :: Game -> [Widget Name]
+drawUI :: Game2 -> [Widget Name]
 drawUI g =
-  [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid g ]
+  [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid2 g ]
 
-drawBoard :: Game -> [Widget Name]
-drawBoard g = [drawGrid g]
 
-drawBoard2 :: Game2 -> [Widget Name]
-drawBoard2 g = [drawGrid2 g]
 
-drawStats :: Game -> Widget Name
+drawStats :: Game2 -> Widget Name
 drawStats g = hLimit 11
-  $ vBox [ drawScore (g ^. score)
-         , padTop (Pad 2) $ drawGameOver (g ^. dead)
+  $ vBox [ drawSteps2 (g ^. stepsRemain)
+         , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
          ]
 
-drawScore :: Int -> Widget Name
-drawScore n = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "Score")
-  $ C.hCenter
+
+
+drawSteps2 :: Int -> Widget Name
+drawSteps2 n = withBorderStyle BS.unicodeBold
+  $ B.borderWithLabel (str "Steps Remaining")
+  $ C.center
   $ padAll 1
   $ str $ show n
 
-drawGameOver :: Bool -> Widget Name
-drawGameOver dead =
+
+drawGameOver2 :: Bool -> Widget Name
+drawGameOver2 dead =
   if dead
      then withAttr gameOverAttr $ C.hCenter $ str "GAME OVER"
      else emptyWidget
 
-drawGrid :: Game -> Widget Name
-drawGrid g = withBorderStyle BS.unicodeRounded
-  $ B.borderWithLabel (str "Board")
-  $ vBox rows
-  where
-    --for each row
-    rows         = [hBox (cellsInRow r) | r <- [height-1,height-2..0]]
-    --forw each col
-    cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
-    --for each coordinate decide to draw snake/food/empty
-    drawCoord    = drawCell . cellAt
-    cellAt c
-      | c `elem`  g ^. snake = Snake
-      | c == g ^. food      = Food
-      | otherwise           = Empty
 
-drawCell :: Cell -> Widget Name
-drawCell Snake = withAttr snakeAttr cw
-drawCell Food  = withAttr foodAttr cw
-drawCell Empty = withAttr emptyAttr cw
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
@@ -165,12 +145,6 @@ drawCell2 Player = withAttr playerAttr cw
 cw :: Widget Name
 cw = str "  "
 
-theMap :: AttrMap
-theMap = attrMap V.defAttr
-  [ (snakeAttr, V.blue `on` V.blue)
-  , (foodAttr, V.red `on` V.red)
-  , (gameOverAttr, fg V.red `V.withStyle` V.bold)
-  ]
 
 theMap2 :: AttrMap
 theMap2 = attrMap V.defAttr

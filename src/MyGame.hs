@@ -4,10 +4,12 @@
 module MyGame
   ( initGame2
   , moves
+  , decrease_step
+  , check_die
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
-  , player, d
+  , player, d, gameOver, stepsRemain
   ) where
 
 import Control.Applicative ((<|>))
@@ -32,6 +34,8 @@ type Coord = V2 Int
 data Game2 = Game2
   { _d      :: MyDirection       -- ^ direction
   , _player :: Coord             -- ^ the location of the player will be modified via I/O
+  , _gameOver :: Bool
+  , _stepsRemain :: Int
   } deriving (Show)
 
 
@@ -64,6 +68,8 @@ initGame2 = do
         {
           _d = MySouth
         , _player = (V2 x y)
+        , _gameOver = False
+        , _stepsRemain = 10
         }
   return (execState initState g)
 
@@ -76,26 +82,40 @@ moves :: MyDirection -> Game2 -> Game2
 moves MyNorth g = do
   let (V2 x y) = g ^. player
   if y >= myheight - 1 then g
-  else g & player %~ (\(V2 a b) -> (V2 a (b+1)))
+  else if g ^. gameOver == True then g
+  else 
+    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1)))
 
 moves MyEast g = do
   let (V2 x y) = g ^. player
   if x >= mywidth - 1 then g
-  else g & player %~ (\(V2 a b) -> (V2 (a+1) b))
+  else if g ^. gameOver == True then g
+  else 
+    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b))
 
 moves MyWest g = do
   let (V2 x y) = g ^. player
   if x <= 0 then g
-  else g & player %~ (\(V2 a b) -> (V2 (a-1) b))
+  else if g ^. gameOver == True then g
+  else 
+    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b))
 
 moves MySouth g = do
   let (V2 x y) = g ^. player
   if y <= 0 then g
-  else g & player %~ (\(V2 a b) -> (V2 a (b-1)))
+  else if g ^. gameOver == True then g
+  else 
+    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1)))
 
 moves _ g = g
 
-  
+decrease_step :: Game2 -> Game2
+decrease_step g =  g & stepsRemain %~ (\n -> (n-1))
+
+check_die :: Game2 -> Game2
+check_die g = do
+  if g ^. stepsRemain == 0 then g & gameOver %~ (\_ -> True)
+  else g
 
 fromList :: [a] -> Stream a
 fromList = foldr (:|) (error "Streams must be infinite")
