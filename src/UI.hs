@@ -111,7 +111,7 @@ drawStats g = hLimit 11
 
 drawSteps2 :: Int -> Widget Name
 drawSteps2 n = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "Steps Remaining")
+  $ B.borderWithLabel (str "Steps")
   $ C.center
   $ padAll 1
   $ str $ show n
