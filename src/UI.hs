@@ -117,8 +117,8 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
   $ B.borderWithLabel (str "MyGame")
   $ vBox rows
   where
-    rows = [hBox (cellsInRow r) | r <- [height - 1, height - 2 .. 0]]
-    cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
+    rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
+    cellsInRow y = [drawCoord (V2 x y) | x <- [0..mywidth-1]]
     drawCoord = drawCell2 . cellAt
     cellAt cell
       | cell == (g ^. player)     = Player

@@ -56,10 +56,12 @@ makeLenses ''Game2
 -- Constants
 
 myheight, mywidth :: Int
-myheight = 20
-mywidth = 20
+myheight = 7
+mywidth = 7
 
 -- Functions
+buildRock :: Int -> [Coord]
+buildRock 0 = []
 
 -- | Step forward in time
 
