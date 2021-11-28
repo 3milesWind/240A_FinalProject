@@ -9,7 +9,7 @@ module MyGame
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
-  , player, d, gameOver, stepsRemain
+  , player, d, gameOver, stepsRemain, princess, win
   ) where
 
 import Control.Applicative ((<|>))
@@ -36,6 +36,8 @@ data Game2 = Game2
   , _player :: Coord             -- ^ the location of the player will be modified via I/O
   , _gameOver :: Bool            -- ^ the bool value mark the game is live or dead
   , _stepsRemain :: Int          -- ^ track the number of stepsRemain
+  , _princess :: Coord
+  , _win :: Bool
   } deriving (Show)
 
 
@@ -69,7 +71,9 @@ initGame2 = do
           _d = MySouth
         , _player = (V2 x y)
         , _gameOver = False
-        , _stepsRemain = 10
+        , _stepsRemain = 100
+        , _princess = (V2 (mywidth-1) (myheight-1))
+        , _win = False
         }
   return (execState initState g)
 
@@ -83,29 +87,33 @@ moves MyNorth g = do
   let (V2 x y) = g ^. player
   if y >= myheight - 1 then g
   else if g ^. gameOver == True then g
+  else if g ^. win == True then g
   else 
-    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1)))
+    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1))))
 
 moves MyEast g = do
   let (V2 x y) = g ^. player
   if x >= mywidth - 1 then g
   else if g ^. gameOver == True then g
+  else if g ^. win == True then g
   else 
-    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b))
+    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b)))
 
 moves MyWest g = do
   let (V2 x y) = g ^. player
   if x <= 0 then g
   else if g ^. gameOver == True then g
+  else if g ^. win == True then g
   else 
-    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b))
+    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b)))
 
 moves MySouth g = do
   let (V2 x y) = g ^. player
   if y <= 0 then g
   else if g ^. gameOver == True then g
+  else if g ^. win == True then g
   else 
-    (check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1)))
+    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1))))
 
 moves _ g = g
 
@@ -115,6 +123,11 @@ decrease_step g =  g & stepsRemain %~ (\n -> (n-1))
 check_die :: Game2 -> Game2
 check_die g = do
   if g ^. stepsRemain == 0 then g & gameOver %~ (\_ -> True)
+  else g
+
+check_win :: Game2 -> Game2
+check_win g = do
+  if g ^. player == g ^. princess then g & win %~ (\_ -> True)
   else g
 
 fromList :: [a] -> Stream a

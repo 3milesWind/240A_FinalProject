@@ -44,7 +44,7 @@ type Name = ()
 
 data Cell = Snake | Food | Empty
 
-data Cell2 = Empty2 | Player
+data Cell2 = Empty2 | Player | Princess
 
 -- App definition
 
@@ -105,6 +105,7 @@ drawStats :: Game2 -> Widget Name
 drawStats g = hLimit 11
   $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
+         , padTop (Pad 2) $ drawGameWin (g ^. win)
          ]
 
 
@@ -125,7 +126,11 @@ drawGameOver2 dead =
      then withAttr gameOverAttr $ C.hCenter $ str "GAME OVER"
      else emptyWidget
 
-
+drawGameWin :: Bool -> Widget Name
+drawGameWin win =
+  if win
+    then withAttr gameWinAttr $ C.hCenter $ str "Sccess!"
+    else emptyWidget
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
@@ -137,11 +142,13 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
     drawCoord = drawCell2 . cellAt
     cellAt cell
       | cell == (g ^. player)     = Player
-      | otherwise               = Empty2
+      | cell == (g ^. princess)   = Princess
+      | otherwise                 = Empty2
 
 drawCell2 :: Cell2 -> Widget Name
-drawCell2 Empty2 = withAttr emptyAttr cw
-drawCell2 Player = withAttr playerAttr cw
+drawCell2 Empty2   = withAttr emptyAttr cw
+drawCell2 Player   = withAttr playerAttr cw
+drawCell2 Princess = withAttr princessAttr cw
 
 
 cw :: Widget Name
@@ -151,18 +158,21 @@ cw = str "  "
 theMap2 :: AttrMap
 theMap2 = attrMap V.defAttr
   [ (playerAttr, V.red `on` V.red)
+  , (princessAttr, V.blue `on` V.blue)
   ]
 
-gameOverAttr :: AttrName
+gameOverAttr, gameWinAttr :: AttrName
 gameOverAttr = "gameOver"
+gameWinAttr = "gameWin"
 
 snakeAttr, foodAttr, emptyAttr :: AttrName
 snakeAttr = "snakeAttr"
 foodAttr = "foodAttr"
 emptyAttr = "emptyAttr"
 
-playerAttr :: AttrName
+playerAttr, princessAttr :: AttrName
 playerAttr = "playerAttr"
+princessAttr = "princessAttr"
 
 steps :: AttrName
 steps = "steps"
