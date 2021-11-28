@@ -30,11 +30,8 @@ import qualified Data.Sequence as S
 import Linear.V2 (V2(..))
 
 -- Types
-
--- | Ticks mark passing of time
---
--- This is our custom event that will be constantly fed into the app.
 data Tick = Tick
+
 
 -- | Named resources
 --
@@ -42,7 +39,6 @@ data Tick = Tick
 -- if we call this "Name" now.
 type Name = ()
 
-data Cell = Snake | Food | Empty
 
 data Cell2 = Empty2 | Player | Princess
 
@@ -68,30 +64,15 @@ main = do
   void $ customMain initialVty builder (Just chan) app g
 
 -- Handling events
-testHandle :: Game2 -> BrickEvent Name Tick -> EventM Name (Next Game2)
-testHandle g _ = continue g
-
-
-handleEvent :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
-handleEvent g (AppEvent Tick)                       = continue $ step g
-handleEvent g (VtyEvent (V.EvKey V.KUp []))         = continue $ turn North g
-handleEvent g (VtyEvent (V.EvKey V.KDown []))       = continue $ turn South g
-handleEvent g (VtyEvent (V.EvKey V.KRight []))      = continue $ turn East g
-handleEvent g (VtyEvent (V.EvKey V.KLeft []))       = continue $ turn West g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'k') [])) = continue $ turn North g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'j') [])) = continue $ turn South g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'l') [])) = continue $ turn East g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'h') [])) = continue $ turn West g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (initGame) >>= continue
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
-handleEvent g (VtyEvent (V.EvKey V.KEsc []))        = halt g
-handleEvent g _                                     = continue g
 
 handleEvent2 :: Game2 -> BrickEvent Name Tick -> EventM Name (Next Game2)
 handleEvent2 g (VtyEvent (V.EvKey V.KUp []))         = continue $ moves MyNorth g
 handleEvent2 g (VtyEvent (V.EvKey V.KDown []))       = continue $ moves MySouth g
 handleEvent2 g (VtyEvent (V.EvKey V.KLeft []))       = continue $ moves MyWest g
 handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (initGame2) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
+handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
 -- Drawing
 
