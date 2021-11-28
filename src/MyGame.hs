@@ -55,8 +55,8 @@ makeLenses ''Game2
 -- Constants
 
 myheight, mywidth :: Int
-myheight = 20
-mywidth = 20
+myheight = 6
+mywidth = 7
 
 -- Functions
 
@@ -72,7 +72,7 @@ initGame2 = do
         , _player = (V2 x y)
         , _gameOver = False
         , _stepsRemain = 100
-        , _princess = (V2 (mywidth-1) (myheight-1))
+        , _princess = (V2 (mywidth-1) 0)
         , _win = False
         }
   return (execState initState g)

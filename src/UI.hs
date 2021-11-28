@@ -129,7 +129,7 @@ drawGameOver2 dead =
 drawGameWin :: Bool -> Widget Name
 drawGameWin win =
   if win
-    then withAttr gameWinAttr $ C.hCenter $ str "Sccess!"
+    then withAttr gameWinAttr $ C.hCenter $ str "Success!"
     else emptyWidget
 
 drawGrid2 :: Game2 -> Widget Name
@@ -137,8 +137,8 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
   $ B.borderWithLabel (str "MyGame")
   $ vBox rows
   where
-    rows = [hBox (cellsInRow r) | r <- [height - 1, height - 2 .. 0]]
-    cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
+    rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
+    cellsInRow y = [drawCoord (V2 x y) | x <- [0..mywidth-1]]
     drawCoord = drawCell2 . cellAt
     cellAt cell
       | cell == (g ^. player)     = Player
@@ -159,6 +159,7 @@ theMap2 :: AttrMap
 theMap2 = attrMap V.defAttr
   [ (playerAttr, V.red `on` V.red)
   , (princessAttr, V.blue `on` V.blue)
+  , (emptyAttr, V.yellow `on` V.yellow)
   ]
 
 gameOverAttr, gameWinAttr :: AttrName
