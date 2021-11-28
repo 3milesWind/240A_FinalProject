@@ -9,7 +9,7 @@ module MyGame
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
-  , player, d, gameOver, stepsRemain, princess, win, _rock
+  , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable
   ) where
 
 import Control.Applicative ((<|>))
@@ -23,7 +23,8 @@ import Control.Monad.Extra (orM)
 import Data.Sequence (Seq(..), (<|))
 import qualified Data.Sequence as S
 import Linear.V2 (V2(..), _x, _y)
-import System.Random (Random(..), newStdGen)
+import System.Random (Random(..), newStdGen, getStdRandom)
+import System.IO.Unsafe
 
 -- Types
 
@@ -39,6 +40,8 @@ data Game2 = Game2
   , _princess :: Coord
   , _win :: Bool
   , _rock :: [Coord]
+  , _monster :: [Coord]
+  , _unwalkable :: [Coord]
   } deriving (Show)
 
 
@@ -56,12 +59,16 @@ makeLenses ''Game2
 -- Constants
 
 myheight, mywidth :: Int
-myheight = 7
+myheight = 6
 mywidth = 7
 
 -- Functions
 buildRock :: Int -> [Coord]
 buildRock 0 = []
+buildRock n = do
+  let x = unsafePerformIO (getStdRandom (randomR (1,mywidth-2)))
+  let y = unsafePerformIO (getStdRandom (randomR (1,myheight-2)))
+  (V2 x y) : buildRock (n-1)
 
 -- | Step forward in time
 
