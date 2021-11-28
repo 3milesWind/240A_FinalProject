@@ -9,7 +9,7 @@ module MyGame
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
-  , player, d, gameOver, stepsRemain, princess, win
+  , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable
   ) where
 
 import Control.Applicative ((<|>))
@@ -23,12 +23,13 @@ import Control.Monad.Extra (orM)
 import Data.Sequence (Seq(..), (<|))
 import qualified Data.Sequence as S
 import Linear.V2 (V2(..), _x, _y)
-import System.Random (Random(..), newStdGen)
+import System.Random (Random(..), newStdGen, getStdRandom)
+import System.IO.Unsafe
 
 -- Types
 
 type Coord = V2 Int
-
+--type Rock = Seq Coord
 --type Rock = Seq Coord
 
 data Game2 = Game2
@@ -38,6 +39,9 @@ data Game2 = Game2
   , _stepsRemain :: Int          -- ^ track the number of stepsRemain
   , _princess :: Coord
   , _win :: Bool
+  , _rock :: [Coord]
+  , _monster :: [Coord]
+  , _unwalkable :: [Coord]
   } deriving (Show)
 
 
@@ -59,6 +63,12 @@ myheight = 6
 mywidth = 7
 
 -- Functions
+buildRock :: Int -> [Coord]
+buildRock 0 = []
+buildRock n = do
+  let x = unsafePerformIO (getStdRandom (randomR (1,mywidth-2)))
+  let y = unsafePerformIO (getStdRandom (randomR (1,myheight-2)))
+  (V2 x y) : buildRock (n-1)
 
 -- | Step forward in time
 

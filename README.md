@@ -17,11 +17,12 @@ As for Monster and Rock, when they are not by the wall, the adventurer can push 
 
 
 
-# Possible libraries (Just initial thoughts. The actual use of libraries may vary): 
+# Possible libraries: 
 
-Control library <br />
+Control Monad library <br />
 Data library    <br />
 Brick library   <br />
+System Random library <br />
 
 # Team members (Name, Email, Github_id): 
 

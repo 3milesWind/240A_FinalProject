@@ -30,11 +30,8 @@ import qualified Data.Sequence as S
 import Linear.V2 (V2(..))
 
 -- Types
-
--- | Ticks mark passing of time
---
--- This is our custom event that will be constantly fed into the app.
 data Tick = Tick
+
 
 -- | Named resources
 --
@@ -42,7 +39,6 @@ data Tick = Tick
 -- if we call this "Name" now.
 type Name = ()
 
-data Cell = Snake | Food | Empty
 
 data Cell2 = Empty2 | Player | Princess
 
@@ -68,57 +64,36 @@ main = do
   void $ customMain initialVty builder (Just chan) app g
 
 -- Handling events
-testHandle :: Game2 -> BrickEvent Name Tick -> EventM Name (Next Game2)
-testHandle g _ = continue g
-
-
-handleEvent :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
-handleEvent g (AppEvent Tick)                       = continue $ step g
-handleEvent g (VtyEvent (V.EvKey V.KUp []))         = continue $ turn North g
-handleEvent g (VtyEvent (V.EvKey V.KDown []))       = continue $ turn South g
-handleEvent g (VtyEvent (V.EvKey V.KRight []))      = continue $ turn East g
-handleEvent g (VtyEvent (V.EvKey V.KLeft []))       = continue $ turn West g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'k') [])) = continue $ turn North g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'j') [])) = continue $ turn South g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'l') [])) = continue $ turn East g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'h') [])) = continue $ turn West g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (initGame) >>= continue
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
-handleEvent g (VtyEvent (V.EvKey V.KEsc []))        = halt g
-handleEvent g _                                     = continue g
 
 handleEvent2 :: Game2 -> BrickEvent Name Tick -> EventM Name (Next Game2)
 handleEvent2 g (VtyEvent (V.EvKey V.KUp []))         = continue $ moves MyNorth g
 handleEvent2 g (VtyEvent (V.EvKey V.KDown []))       = continue $ moves MySouth g
 handleEvent2 g (VtyEvent (V.EvKey V.KLeft []))       = continue $ moves MyWest g
 handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (initGame2) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
+handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
 -- Drawing
 
 drawUI :: Game2 -> [Widget Name]
 drawUI g =
-  [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid2 g ]
+  [ C.center $ padRight (Pad 5) (drawStats g) <+> drawGrid2 g ]
 
 
 
 drawStats :: Game2 -> Widget Name
-drawStats g = hLimit 11
+drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
+         , padTop (Pad 2) $ drawQuit
+         , padTop (Pad 2) $ drawRestart
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
          ]
 
 
-
-drawSteps2 :: Int -> Widget Name
-drawSteps2 n = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "Steps")
-  $ C.center
-  $ padAll 1
-  $ str $ show n
-
 drawSteps :: Int -> Widget Name
-drawSteps n = withAttr steps $ C.hCenter $ str ("Steps" ++ (show n))
+drawSteps n = withAttr steps $ C.hCenter $ str ("Steps: " ++ (show n))
 
 drawGameOver2 :: Bool -> Widget Name
 drawGameOver2 dead =
@@ -131,6 +106,11 @@ drawGameWin win =
   if win
     then withAttr gameWinAttr $ C.hCenter $ str "Success!"
     else emptyWidget
+
+drawQuit :: Widget Name
+drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
+
+drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
@@ -177,3 +157,7 @@ princessAttr = "princessAttr"
 
 steps :: AttrName
 steps = "steps"
+
+quit, restart :: AttrName
+quit = "quit"
+restart = "restart"
