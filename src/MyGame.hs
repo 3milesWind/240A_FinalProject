@@ -73,7 +73,7 @@ buildRock n = do
 outrange :: [Coord]
 outrange = [(V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2), (V2 6 2)
            ,(V2 0 3), (V2 5 3), (V2 6 3)
-           ,(V2 0 4), (V2 6 4), (V2 1 6), (V2 5 6)
+           ,(V2 0 4), (V2 6 4), (V2 6 1), (V2 6 5)
            ,(V2 0 5), (V2 1 5), (V2 2 5), (V2 3 5)]
 -- | Step forward in time
 

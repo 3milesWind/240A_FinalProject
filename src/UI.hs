@@ -114,7 +114,7 @@ drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "MyGame")
+  $ B.borderWithLabel (str "MyGame")   
   $ vBox rows
   where
     rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
