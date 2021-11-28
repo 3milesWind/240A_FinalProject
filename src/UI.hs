@@ -78,28 +78,22 @@ handleEvent2 g _                                     = continue g
 
 drawUI :: Game2 -> [Widget Name]
 drawUI g =
-  [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid2 g ]
+  [ C.center $ padRight (Pad 5) (drawStats g) <+> drawGrid2 g ]
 
 
 
 drawStats :: Game2 -> Widget Name
-drawStats g = hLimit 11
+drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
+         , padTop (Pad 2) $ drawQuit
+         , padTop (Pad 2) $ drawRestart
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
          ]
 
 
-
-drawSteps2 :: Int -> Widget Name
-drawSteps2 n = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "Steps")
-  $ C.center
-  $ padAll 1
-  $ str $ show n
-
 drawSteps :: Int -> Widget Name
-drawSteps n = withAttr steps $ C.hCenter $ str ("Steps" ++ (show n))
+drawSteps n = withAttr steps $ C.hCenter $ str ("Steps: " ++ (show n))
 
 drawGameOver2 :: Bool -> Widget Name
 drawGameOver2 dead =
@@ -112,6 +106,11 @@ drawGameWin win =
   if win
     then withAttr gameWinAttr $ C.hCenter $ str "Sccess!"
     else emptyWidget
+
+drawQuit :: Widget Name
+drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
+
+drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
@@ -157,3 +156,7 @@ princessAttr = "princessAttr"
 
 steps :: AttrName
 steps = "steps"
+
+quit, restart :: AttrName
+quit = "quit"
+restart = "restart"

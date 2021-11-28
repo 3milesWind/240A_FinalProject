@@ -9,7 +9,7 @@ module MyGame
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
-  , player, d, gameOver, stepsRemain, princess, win
+  , player, d, gameOver, stepsRemain, princess, win, _rock
   ) where
 
 import Control.Applicative ((<|>))
@@ -28,7 +28,7 @@ import System.Random (Random(..), newStdGen)
 -- Types
 
 type Coord = V2 Int
-
+--type Rock = Seq Coord
 --type Rock = Seq Coord
 
 data Game2 = Game2
@@ -38,6 +38,7 @@ data Game2 = Game2
   , _stepsRemain :: Int          -- ^ track the number of stepsRemain
   , _princess :: Coord
   , _win :: Bool
+  , _rock :: [Coord]
   } deriving (Show)
 
 
