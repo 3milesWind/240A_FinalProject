@@ -40,7 +40,7 @@ data Tick = Tick
 type Name = ()
 
 
-data Cell2 = Empty2 | Player | Princess
+data Cell2 = Empty2 | Player | Princess | Unwalkable
 
 -- App definition
 
@@ -123,12 +123,14 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
     cellAt cell
       | cell == (g ^. player)     = Player
       | cell == (g ^. princess)   = Princess
+      | cell `elem` (g ^. unwalkable) = Unwalkable
       | otherwise                 = Empty2
 
 drawCell2 :: Cell2 -> Widget Name
 drawCell2 Empty2   = withAttr emptyAttr cw
 drawCell2 Player   = withAttr playerAttr cw
 drawCell2 Princess = withAttr princessAttr cw
+drawCell2 Unwalkable = withAttr unwalkableAttr cw
 
 
 cw :: Widget Name
@@ -137,8 +139,10 @@ cw = str "  "
 
 theMap2 :: AttrMap
 theMap2 = attrMap V.defAttr
-  [ (playerAttr, V.red `on` V.red)
+  [ (playerAttr, V.white `on` V.white)
   , (princessAttr, V.blue `on` V.blue)
+  , (unwalkableAttr, V.black `on` V.black)
+  , (emptyAttr, V.red `on` V.red)
   ]
 
 gameOverAttr, gameWinAttr :: AttrName
@@ -153,6 +157,7 @@ emptyAttr = "emptyAttr"
 playerAttr, princessAttr :: AttrName
 playerAttr = "playerAttr"
 princessAttr = "princessAttr"
+unwalkableAttr = "unwalkableAttr"
 
 steps :: AttrName
 steps = "steps"
