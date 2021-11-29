@@ -193,6 +193,7 @@ check_win g = do
 fromList :: [a] -> Stream a
 fromList = foldr (:|) (error "Streams must be infinite")
 
+--check if rock exists in the next step
 rockExists :: Game2 -> MyDirection -> Bool
 rockExists g MyNorth = do
   let (V2 x y) = g ^. player
@@ -214,6 +215,7 @@ rockExists g MyWest = do
   if (V2 (x-1) y) `elem` (g ^. rock) then True
   else False
 
+--check if this rock is movable
 movable :: Game2 -> MyDirection -> Bool
 movable g MyNorth = do
   let (V2 x y) = g ^. player
@@ -251,6 +253,7 @@ movable g MyEast = do
   else if (V2 (x+2) y) == (g ^. princess) then False 
   else True
 
+--move
 moveRock :: Game2 -> MyDirection -> Game2
 moveRock g MyNorth = do
   let (V2 x y) = g ^. player
