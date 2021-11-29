@@ -65,7 +65,6 @@ mywidth = 7
 
 -- Functions
 
-
 outrange :: [Coord]
 outrange = [(V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2), (V2 6 2)
            ,(V2 0 3), (V2 5 3), (V2 6 3)

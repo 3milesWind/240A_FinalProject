@@ -152,9 +152,8 @@ drawCell2 Princess = withAttr princessAttr cw
 drawCell2 Unwalkable = withAttr unwalkableAttr cw
 drawCell2 Rock = withAttr rockAttr cw
 
-
 cw :: Widget Name
-cw = str "  "
+cw = str "     \n\n\n" 
 
 
 theMap2 :: AttrMap
