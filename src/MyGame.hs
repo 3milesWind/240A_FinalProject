@@ -3,6 +3,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module MyGame
   ( initGame2
+  ,initGame3
   , moves
   , decrease_step
   , check_die
@@ -87,7 +88,25 @@ initGame2 = do
         , _player = (V2 x y)
         , _gameOver = False
         , _stepsRemain = 100
-        , _princess = (V2 6 0)
+        , _princess = (V2 (mywidth-1) 0)
+        , _win = False
+        , _unwalkable = outrange
+        , _rock = rockLocation
+        }
+  return (execState initState g)
+
+
+initGame3 :: IO Game2
+initGame3 = do
+  let x = 0
+      y = 0
+      g = Game2
+        {
+          _d = MySouth
+        , _player = (V2 x y)
+        , _gameOver = False
+        , _stepsRemain = 100
+        , _princess = (V2 (mywidth-1) (myheight-1))
         , _win = False
         , _unwalkable = outrange
         , _rock = rockLocation

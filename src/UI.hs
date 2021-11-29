@@ -52,16 +52,34 @@ app = App { appDraw = drawUI
           , appAttrMap = const theMap2
           }
 
-main :: IO ()
-main = do
-  chan <- newBChan 10
-  forkIO $ forever $ do
-    writeBChan chan Tick
-    threadDelay 100000 -- decides how fast your game moves
-  g <- initGame2
-  let builder = V.mkVty V.defaultConfig
-  initialVty <- builder
-  void $ customMain initialVty builder (Just chan) app g
+
+tmp:: IO ()
+tmp = do
+    chan <- newBChan 10
+    forkIO $ forever $ do
+      writeBChan chan Tick
+      threadDelay 100000 -- decides how fast your game moves
+    g <- initGame2
+    let builder = V.mkVty V.defaultConfig
+    initialVty <- builder
+    void $ customMain initialVty builder (Just chan) app g
+
+tmp2:: IO ()
+tmp2 = do
+    chan <- newBChan 10
+    forkIO $ forever $ do
+      writeBChan chan Tick
+      threadDelay 100000 -- decides how fast your game moves
+    g <- initGame3
+    let builder = V.mkVty V.defaultConfig
+    initialVty <- builder
+    void $ customMain initialVty builder (Just chan) app g
+
+main2 :: Int -> IO ()
+main2 int= if int ==1 
+           then tmp
+           else tmp2
+            
 
 -- Handling events
 
@@ -104,7 +122,7 @@ drawGameOver2 dead =
 drawGameWin :: Bool -> Widget Name
 drawGameWin win =
   if win
-    then withAttr gameWinAttr $ C.hCenter $ str "Sccess!"
+    then withAttr gameWinAttr $ C.hCenter $ str "Success!"
     else emptyWidget
 
 drawQuit :: Widget Name
