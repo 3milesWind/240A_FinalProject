@@ -61,10 +61,9 @@ As for the Rock and Monsters, we set the location of the them by [rockLocation] 
 We added a function to quit or restart the game in UI.hs. If we input “q”, it will decide to quite the game, and if it input a “r”, the game will return to the initialized status. And we also added Level.hs to select the level of the game to play.
 
 ### What challenges (if any) did you have so far and how did you solve them?
-TODO <br />
+Challenge: the game just has the most simple UI now, which is just made up of squares of different colors. We still need to spend some time to find a proper way to embellish the game’s UI design.
+
+Solution: We are trying to use some png picture to beautify our UI, such as proper png picture for the elements in the game.
 
 ### Do you expect to meet your goals until the deadline?
 Yes, we expect to meet all the description in the previous project proposal, including the movement of adventurer, map restriction, and functions of rock/monster, etc.
-
-### If not, how will you modify your goals?
-TODO<br />
