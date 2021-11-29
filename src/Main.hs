@@ -1,5 +1,10 @@
-module Main
-  ( main
-  ) where
+module Main where
+--  (  main
+--  ) where
 
-import UI (main)
+import Level (pickLevel)
+import UI (main2)
+main :: IO ()
+main = do 
+   pickLevel>>=(\x->UI.main2 x)
+
