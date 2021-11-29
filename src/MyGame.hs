@@ -91,6 +91,8 @@ initGame2 = do
         , _stepsRemain = 100
         , _princess = (V2 (mywidth-1) 0)
         , _win = False
+        , _unwalkable = outrange
+        , _rock = rockLocation
         }
   return (execState initState g)
 
