@@ -136,6 +136,8 @@ moves MyNorth g = do
   else if (rockExists g MyNorth) && (movable g MyNorth) == False then g
   else if (rockExists g MyNorth) && (movable g MyNorth) then 
     check_win(check_die(decrease_step(moveRock g MyNorth))) 
+  else if (monsterExists g MyNorth) then
+    check_win(check_die(decrease_step(killMonster g MyNorth)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1))))
 
@@ -148,6 +150,8 @@ moves MyEast g = do
   else if (rockExists g MyEast) && (movable g MyEast) == False then g
   else if (rockExists g MyEast) && (movable g MyEast) then 
     check_win(check_die(decrease_step(moveRock g MyEast))) 
+  else if (monsterExists g MyEast) then
+    check_win(check_die(decrease_step(killMonster g MyEast)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b)))
 
@@ -160,6 +164,8 @@ moves MyWest g = do
   else if (rockExists g MyWest) && (movable g MyWest) == False then g
   else if (rockExists g MyWest) && (movable g MyWest) then 
     check_win(check_die(decrease_step(moveRock g MyWest))) 
+  else if (monsterExists g MyWest) then
+    check_win(check_die(decrease_step(killMonster g MyWest)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b)))
 
@@ -172,6 +178,8 @@ moves MySouth g = do
   else if (rockExists g MySouth) && (movable g MySouth) == False then g
   else if (rockExists g MySouth) && (movable g MySouth) then 
     check_win(check_die(decrease_step(moveRock g MySouth))) 
+  else if (monsterExists g MySouth) then
+    check_win(check_die(decrease_step(killMonster g MySouth)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1))))
 
@@ -214,6 +222,48 @@ rockExists g MyWest = do
   let (V2 x y) = g ^. player
   if (V2 (x-1) y) `elem` (g ^. rock) then True
   else False
+
+monsterExists :: Game2 -> MyDirection -> Bool
+monsterExists g MyNorth = do
+   let (V2 x y) = g ^. player
+   if (V2 x (y+1)) `elem` (g ^. monster) then True
+   else False
+
+monsterExists g MySouth = do
+  let (V2 x y) = g ^. player
+  if (V2 x (y-1)) `elem` (g ^. monster) then True
+  else False 
+
+monsterExists g MyEast = do
+  let (V2 x y) = g ^. player
+  if (V2 (x+1) y) `elem` (g ^. monster) then True
+  else False
+
+monsterExists g MyWest = do
+  let (V2 x y) = g ^. player
+  if (V2 (x-1) y) `elem` (g ^. monster) then True
+  else False
+
+killMonster :: Game2 -> MyDirection -> Game2
+killMonster g MyNorth = do
+  let (V2 x y) = g ^. player
+  let curr_monster = (V2 x (y+1))
+  g & monster %~ (\list -> (delete curr_monster list))
+
+killMonster g MySouth = do
+  let (V2 x y) = g ^. player
+  let curr_monster = (V2 x (y-1))
+  g & monster %~ (\list -> (delete curr_monster list))
+
+killMonster g MyEast = do
+  let (V2 x y) = g ^. player
+  let curr_monster = (V2 (x+1) y)
+  g & monster %~ (\list -> (delete curr_monster list))
+
+killMonster g MyWest = do
+  let (V2 x y) = g ^. player
+  let curr_monster = (V2 (x-1) y)
+  g & monster %~ (\list -> (delete curr_monster list))
 
 --check if this rock is movable
 movable :: Game2 -> MyDirection -> Bool
