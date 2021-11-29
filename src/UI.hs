@@ -105,7 +105,7 @@ drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawQuit
          , padTop (Pad 2) $ drawRestart
-         , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
+         , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver) (g ^. win)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
          ]
 
@@ -113,17 +113,17 @@ drawStats g = hLimit 20
 drawSteps :: Int -> Widget Name
 drawSteps n = withAttr steps $ C.hCenter $ str ("Steps: " ++ (show n))
 
-drawGameOver2 :: Bool -> Widget Name
-drawGameOver2 dead =
-  if dead
+drawGameOver2 :: Bool -> Bool -> Widget Name
+drawGameOver2 dead win =
+  if dead && (win == False)
      then withAttr gameOverAttr $ C.hCenter $ str "GAME OVER"
-     else emptyWidget
+  else emptyWidget
 
 drawGameWin :: Bool -> Widget Name
 drawGameWin win =
   if win
     then withAttr gameWinAttr $ C.hCenter $ str "Success!"
-    else emptyWidget
+else emptyWidget
 
 drawQuit :: Widget Name
 drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
@@ -132,7 +132,7 @@ drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "MyGame")   
+  $ B.borderWithLabel (str "Rescue Princess")   
   $ vBox rows
   where
     rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
