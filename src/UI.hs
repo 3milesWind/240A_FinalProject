@@ -40,7 +40,7 @@ data Tick = Tick
 type Name = ()
 
 
-data Cell2 = Empty2 | Player | Princess
+data Cell2 = Empty2 | Player | Princess | Unwalkable | Rock
 
 -- App definition
 
@@ -132,21 +132,25 @@ drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "MyGame")
+  $ B.borderWithLabel (str "MyGame")   
   $ vBox rows
   where
     rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
     cellsInRow y = [drawCoord (V2 x y) | x <- [0..mywidth-1]]
     drawCoord = drawCell2 . cellAt
     cellAt cell
-      | cell == (g ^. player)     = Player
-      | cell == (g ^. princess)   = Princess
-      | otherwise                 = Empty2
+      | cell == (g ^. player)         = Player
+      | cell == (g ^. princess)       = Princess
+      | cell `elem` (g ^. unwalkable) = Unwalkable
+      | cell `elem` (g ^. rock)       = Rock
+      | otherwise                     = Empty2
 
 drawCell2 :: Cell2 -> Widget Name
 drawCell2 Empty2   = withAttr emptyAttr cw
 drawCell2 Player   = withAttr playerAttr cw
 drawCell2 Princess = withAttr princessAttr cw
+drawCell2 Unwalkable = withAttr unwalkableAttr cw
+drawCell2 Rock = withAttr rockAttr cw
 
 
 cw :: Widget Name
@@ -155,9 +159,11 @@ cw = str "  "
 
 theMap2 :: AttrMap
 theMap2 = attrMap V.defAttr
-  [ (playerAttr, V.red `on` V.red)
+  [ (playerAttr, V.white `on` V.white)
   , (princessAttr, V.blue `on` V.blue)
-  , (emptyAttr, V.yellow `on` V.yellow)
+  , (unwalkableAttr, V.black `on` V.black)
+  , (emptyAttr, V.red `on` V.red)
+  , (rockAttr, V.cyan `on` V.cyan)
   ]
 
 gameOverAttr, gameWinAttr :: AttrName
@@ -169,9 +175,11 @@ snakeAttr = "snakeAttr"
 foodAttr = "foodAttr"
 emptyAttr = "emptyAttr"
 
-playerAttr, princessAttr :: AttrName
+playerAttr, princessAttr, unwalkableAttr, rockAttr :: AttrName
 playerAttr = "playerAttr"
 princessAttr = "princessAttr"
+unwalkableAttr = "unwalkableAttr"
+rockAttr = "rockAttr"
 
 steps :: AttrName
 steps = "steps"

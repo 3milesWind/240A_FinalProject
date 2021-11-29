@@ -64,43 +64,53 @@ myheight = 6
 mywidth = 7
 
 -- Functions
-buildRock :: Int -> [Coord]
-buildRock 0 = []
-buildRock n = do
-  let x = unsafePerformIO (getStdRandom (randomR (1,mywidth-2)))
-  let y = unsafePerformIO (getStdRandom (randomR (1,myheight-2)))
-  (V2 x y) : buildRock (n-1)
 
+
+outrange :: [Coord]
+outrange = [(V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2), (V2 6 2)
+           ,(V2 0 3), (V2 5 3), (V2 6 3)
+           ,(V2 0 4), (V2 6 4), (V2 6 1), (V2 6 5)
+           ,(V2 0 5), (V2 1 5), (V2 2 5), (V2 3 5)
+           ]
+
+rockLocation :: [Coord]
+rockLocation = [ (V2 1 0), (V2 3 0)
+               , (V2 1 1), (V2 4 1)
+               ]
 -- | Step forward in time
 
 initGame2 :: IO Game2
 initGame2 = do
-  let x = 0
-      y = 0
+  let x = 5
+      y = 5
       g = Game2
         {
           _d = MySouth
         , _player = (V2 x y)
         , _gameOver = False
         , _stepsRemain = 100
-        , _princess = (V2 (mywidth-1) 0)
+        , _princess = (V2 6 0)
         , _win = False
+        , _unwalkable = outrange
+        , _rock = rockLocation
         }
   return (execState initState g)
 
 
 initGame3 :: IO Game2
 initGame3 = do
-  let x = 0
-      y = 0
+  let x = 5
+      y = 5
       g = Game2
         {
           _d = MySouth
         , _player = (V2 x y)
         , _gameOver = False
         , _stepsRemain = 100
-        , _princess = (V2 (mywidth-1) (myheight-1))
+        , _princess = (V2 0 0)
         , _win = False
+        , _unwalkable = outrange
+        , _rock = rockLocation
         }
   return (execState initState g)
 
@@ -112,33 +122,37 @@ initState = do
 moves :: MyDirection -> Game2 -> Game2
 moves MyNorth g = do
   let (V2 x y) = g ^. player
-  if y >= myheight - 1 then g
+  if g ^. win == True then g
   else if g ^. gameOver == True then g
-  else if g ^. win == True then g
+  else if y >= myheight - 1 then g
+  else if (V2 x (y+1)) `elem` (g ^. unwalkable) then g
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1))))
 
 moves MyEast g = do
   let (V2 x y) = g ^. player
-  if x >= mywidth - 1 then g
+  if g ^. win == True then g
   else if g ^. gameOver == True then g
-  else if g ^. win == True then g
+  else if x >= mywidth - 1 then g
+  else if (V2 (x+1) y) `elem` (g ^. unwalkable) then g
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b)))
 
 moves MyWest g = do
   let (V2 x y) = g ^. player
-  if x <= 0 then g
+  if g ^. win == True then g
   else if g ^. gameOver == True then g
-  else if g ^. win == True then g
+  else if x <= 0 then g
+  else if (V2 (x-1) y) `elem` (g ^. unwalkable) then g
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b)))
 
 moves MySouth g = do
   let (V2 x y) = g ^. player
-  if y <= 0 then g
+  if g ^. win == True then g
   else if g ^. gameOver == True then g
-  else if g ^. win == True then g
+  else if y <= 0 then g
+  else if (V2 x (y-1)) `elem` (g ^. unwalkable) then g
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1))))
 
@@ -159,3 +173,27 @@ check_win g = do
 
 fromList :: [a] -> Stream a
 fromList = foldr (:|) (error "Streams must be infinite")
+
+rockExists :: Game2 -> MyDirection -> Bool
+rockExists g MyNorth = do
+  let (V2 x y) = g ^. player
+  if (V2 x (y+1)) `elem` (g ^. rock) then True
+  else False
+
+rockExists g MySouth = do
+  let (V2 x y) = g ^. player
+  if (V2 x (y-1)) `elem` (g ^. rock) then True
+  else False 
+
+rockExists g MyEast = do
+  let (V2 x y) = g ^. player
+  if (V2 (x+1) y) `elem` (g ^. rock) then True
+  else False
+
+rockExists g MyWest = do
+  let (V2 x y) = g ^. player
+  if (V2 (x-1) y) `elem` (g ^. rock) then True
+  else False
+  
+  
+
