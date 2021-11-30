@@ -88,11 +88,18 @@ handleEvent2 g (VtyEvent (V.EvKey V.KUp []))         = continue $ moves MyNorth 
 handleEvent2 g (VtyEvent (V.EvKey V.KDown []))       = continue $ moves MySouth g
 handleEvent2 g (VtyEvent (V.EvKey V.KLeft []))       = continue $ moves MyWest g
 handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (handleRestart g) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '1') [])) = liftIO (initGame1) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '2') [])) = liftIO (initGame2) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
 handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
+
+handleRestart :: Game2 -> IO Game2
+handleRestart g = 
+  if g ^. level == 1
+    then initGame1
+  else initGame2
 -- Drawing
 
 drawUI :: Game2 -> [Widget Name]
@@ -105,10 +112,11 @@ drawStats :: Game2 -> Widget Name
 drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawQuit
+         , padTop (Pad 2) $ drawRestart
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver) (g ^. win)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
-         , padTop (Pad 2) $ drawLevel1
-         , padTop (Pad 2) $ drawLevel2
+         , padTop (Pad 2) $ drawLevel1 (g ^. level)
+         , padTop (Pad 2) $ drawLevel2 (g ^. level)
          ]
 
 
@@ -130,11 +138,20 @@ else emptyWidget
 drawQuit :: Widget Name
 drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
 
-drawLevel1 :: Widget Name
-drawLevel1 = withAttr level1 $ C.hCenter $ str "Press 1 to level1"
+drawRestart :: Widget Name
+drawRestart = withAttr restart $ C.hCenter $ str "Press r to restart"
 
-drawLevel2 :: Widget Name
-drawLevel2 = withAttr level2 $ C.hCenter $ str "Press 2 to level2"
+drawLevel1 :: Int ->  Widget Name
+drawLevel1 level = 
+  if level == 1
+    then emptyWidget
+  else withAttr level1 $ C.hCenter $ str "Press 1 to level1"
+
+drawLevel2 :: Int -> Widget Name
+drawLevel2 level = 
+  if level == 2
+    then emptyWidget
+  else withAttr level2 $ C.hCenter $ str "Press 2 to level2"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
