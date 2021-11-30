@@ -4,12 +4,13 @@
 module MyGame
   ( initGame1
   , initGame2
+  , initGame3
   , moves
   , decrease_step
   , check_die
   , Game2(..)
   , MyDirection(..)
-  , myheight, mywidth
+  , myheight, mywidth, level3_height, level3_width
   , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable, level
   ) where
 
@@ -64,9 +65,11 @@ myheight, mywidth :: Int
 myheight = 6
 mywidth = 7
 
-
+level3_height, level3_width :: Int
+level3_height = 4
+level3_width = 9
 --fixed setup for each difficulty
---game1
+--level 1
 outrange1 :: [Coord]
 outrange1 = [ (V2 0 0), (V2 1 0), (V2 2 0), (V2 3 0)
             , (V2 2 1), (V2 3 1)
@@ -85,7 +88,7 @@ monsterLocation1 = [ (V2 5 1), (V2 6 0)
                    , (V2 1 4)
                    ]
 
---game2
+--leve 2
 outrange2 :: [Coord]
 outrange2 = [(V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2), (V2 6 2)
            ,(V2 0 3), (V2 5 3), (V2 6 3)
@@ -103,7 +106,27 @@ monsterLocation2 = [ (V2 2 3), (V2 4 3)
                    , (V2 3 4)           
                    ]
 
-            
+--level 3 
+outrange3 :: [Coord]
+outrange3 = [ (V2 0 0), (V2 0 3)
+            , (V2 2 3)
+            , (V2 6 3)
+            , (V2 8 0), (V2 8 3)
+            ]
+
+rockLocation3 :: [Coord]
+rockLocation3 = [ (V2 0 2)
+                , (V2 1 1), (V2 1 3)
+                , (V2 2 1)
+                , (V2 3 0), (V2 3 1), (V2 3 2), (V2 3 3)
+                , (V2 4 2)
+                , (V2 5 2)
+                , (V2 6 0), (V2 6 1)
+                , (V2 7 1)
+                ]
+        
+monsterLocation3 :: [Coord]
+monsterLocation3 = []
 -- | Step forward in time
 
 initGame1 :: IO Game2
@@ -142,6 +165,24 @@ initGame2 = do
         }
   return (execState initState g)
 
+initGame3 :: IO Game2
+initGame3 = do
+  let
+    g = Game2
+      {
+        _d = MySouth
+      , _player = (V2 1 0)
+      , _gameOver = False
+      , _stepsRemain = 17
+      , _princess = (V2 8 2)
+      , _win = False
+      , _unwalkable = outrange3
+      , _rock = rockLocation3
+      , _monster = monsterLocation3
+      , _level = 3
+      }
+  return (execState initState g)
+
 initState :: State Game2 ()
 initState = do
   s <- get
@@ -152,7 +193,8 @@ moves MyNorth g = do
   let (V2 x y) = g ^. player
   if g ^. win == True then g
   else if g ^. gameOver == True then g
-  else if y >= myheight - 1 then g
+  else if (g ^. level /= 3) && y >= myheight - 1 then g
+  else if (g ^. level == 3) && y >= level3_height then g
   else if (V2 x (y+1)) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyNorth) && (movable g MyNorth) == False then g
   else if (rockExists g MyNorth) && (movable g MyNorth) then 
@@ -168,7 +210,8 @@ moves MyEast g = do
   let (V2 x y) = g ^. player
   if g ^. win == True then g
   else if g ^. gameOver == True then g
-  else if x >= mywidth - 1 then g
+  else if (g ^. level /= 3) && x >= mywidth - 1 then g
+  else if (g ^. level == 3) && x >= level3_width - 1 then g
   else if (V2 (x+1) y) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyEast) && (movable g MyEast) == False then g
   else if (rockExists g MyEast) && (movable g MyEast) then 
@@ -294,11 +337,12 @@ killMonster g MyWest = do
   let curr_monster = (V2 (x-1) y)
   g & monster %~ (\list -> (delete curr_monster list))
 
---check if this rock is movable
+--check if this object is movable
 movable :: Game2 -> MyDirection -> Bool
 movable g MyNorth = do
   let (V2 x y) = g ^. player
-  if (y+2) >= myheight then False
+  if (g ^. level /=3) && ((y+2) >= myheight) then False
+  else if ( g ^. level == 3) && ((y+2) >= level3_height) then False
   else if (V2 x (y+2)) `elem` (g ^. rock) then False
   else if (V2 x (y+2)) `elem` (g ^. monster) then False
   else if (V2 x (y+2)) `elem` (g ^. unwalkable) then False
@@ -307,7 +351,8 @@ movable g MyNorth = do
 
 movable g MySouth = do
   let (V2 x y) = g ^. player
-  if (y-2) < 0 then False
+  if (g ^. level /=3) && ((y-2) < 0) then False
+  else if ( g ^. level == 3) && ((y-2) < 0) then False
   else if (V2 x (y-2)) `elem` (g ^. rock) then False
   else if (V2 x (y-2)) `elem` (g ^. monster) then False
   else if (V2 x (y-2)) `elem` (g ^. unwalkable) then False
@@ -316,7 +361,8 @@ movable g MySouth = do
 
 movable g MyWest = do
   let (V2 x y) = g ^. player
-  if (x-2) < 0 then False
+  if (g ^. level /=3) && ((x-2) < 0) then False
+  else if ( g ^. level == 3) && ((x-2) < 0) then False
   else if (V2 (x-2) y) `elem` (g ^. rock) then False
   else if (V2 (x-2) y) `elem` (g ^. monster) then False
   else if (V2 (x-2) y) `elem` (g ^. unwalkable) then False
@@ -325,7 +371,8 @@ movable g MyWest = do
 
 movable g MyEast = do
   let (V2 x y) = g ^. player
-  if (x+2) >= mywidth then False
+  if (g ^. level /=3) && ((x+2) >= mywidth) then False
+  else if ( g ^. level == 3) && ((x+2) >= level3_width) then False
   else if (V2 (x+2) y) `elem` (g ^. rock) then False
   else if (V2 (x+2) y) `elem` (g ^. monster) then False
   else if (V2 (x+2) y) `elem` (g ^. unwalkable) then False

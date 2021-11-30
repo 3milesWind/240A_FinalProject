@@ -75,10 +75,23 @@ tmp2 = do
     initialVty <- builder
     void $ customMain initialVty builder (Just chan) app g
 
+tmp3:: IO ()
+tmp3 = do
+    chan <- newBChan 10
+    forkIO $ forever $ do
+      writeBChan chan Tick
+      threadDelay 100000 -- decides how fast your game moves
+    g <- initGame3
+    let builder = V.mkVty V.defaultConfig
+    initialVty <- builder
+    void $ customMain initialVty builder (Just chan) app g
+
 main2 :: Int -> IO ()
 main2 int= if int ==1 
-           then tmp
-           else tmp2
+            then tmp
+           else if int == 2
+             then tmp2
+           else tmp3
             
 
 -- Handling events
@@ -91,6 +104,7 @@ handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (handleRestart g) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '1') [])) = liftIO (initGame1) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '2') [])) = liftIO (initGame2) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar '3') [])) = liftIO (initGame3) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
 handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
@@ -99,6 +113,8 @@ handleRestart :: Game2 -> IO Game2
 handleRestart g = 
   if g ^. level == 1
     then initGame1
+  else if g ^. level == 3
+    then initGame3
   else initGame2
 -- Drawing
 
@@ -117,6 +133,7 @@ drawStats g = hLimit 20
          , padTop (Pad 2) $ drawGameWin (g ^. win)
          , padTop (Pad 2) $ drawLevel1 (g ^. level)
          , padTop (Pad 2) $ drawLevel2 (g ^. level)
+         , padTop (Pad 2) $ drawLevel3 (g ^. level)
          ]
 
 
@@ -153,13 +170,40 @@ drawLevel2 level =
     then emptyWidget
   else withAttr level2 $ C.hCenter $ str "Press 2 to level2"
 
+drawLevel3 :: Int -> Widget Name
+drawLevel3 level =
+  if level == 3
+    then emptyWidget
+  else withAttr level3 $ C.hCenter $ str "Press 3 to level3"
+
 drawGrid2 :: Game2 -> Widget Name
-drawGrid2 g = withBorderStyle BS.unicodeBold
+drawGrid2 g =
+  if (g ^. level /= 3) then (drawGameLevel g)
+  else drawGameLevel3 g
+
+drawGameLevel :: Game2 -> Widget Name
+drawGameLevel g = withBorderStyle BS.unicodeBold
   $ B.borderWithLabel (str ("Rescue Princess " ++ "level: " ++ show (g ^. level)))   
   $ vBox rows
   where
     rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
     cellsInRow y = [drawCoord (V2 x y) | x <- [0..mywidth-1]]
+    drawCoord = drawCell2 . cellAt
+    cellAt cell
+      | cell == (g ^. player)         = Player
+      | cell == (g ^. princess)       = Princess
+      | cell `elem` (g ^. unwalkable) = Unwalkable
+      | cell `elem` (g ^. rock)       = Rock
+      | cell `elem` (g ^. monster)    = Monster
+      | otherwise                     = Empty2
+
+drawGameLevel3 :: Game2 -> Widget Name
+drawGameLevel3 g =  withBorderStyle BS.unicodeBold
+  $ B.borderWithLabel (str ("Rescue Princess " ++ "level: " ++ show (g ^. level)))   
+  $ vBox rows
+  where
+    rows = [hBox (cellsInRow r) | r <- [level3_height - 1, level3_height - 2 .. 0]]
+    cellsInRow y = [drawCoord (V2 x y) | x <- [0..level3_width - 1]]
     drawCoord = drawCell2 . cellAt
     cellAt cell
       | cell == (g ^. player)         = Player
@@ -210,8 +254,9 @@ monsterAttr = "monsterAttr"
 steps :: AttrName
 steps = "steps"
 
-quit, restart, level1, level2 :: AttrName
+quit, restart, level1, level2, level3 :: AttrName
 quit = "quit"
 restart = "restart"
 level1 = "level1"
 level2 = "level2"
+level3 = "level3"
