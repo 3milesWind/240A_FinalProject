@@ -93,7 +93,7 @@ initGame2 = do
           _d = MySouth
         , _player = (V2 x y)
         , _gameOver = False
-        , _stepsRemain = 22
+        , _stepsRemain = 24
         , _princess = (V2 (mywidth-1) 0)
         , _win = False
         , _unwalkable = outrange2
@@ -135,8 +135,10 @@ moves MyNorth g = do
   else if (V2 x (y+1)) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyNorth) && (movable g MyNorth) == False then g
   else if (rockExists g MyNorth) && (movable g MyNorth) then 
-    check_win(check_die(decrease_step(moveRock g MyNorth))) 
-  else if (monsterExists g MyNorth) then
+    check_win(check_die(decrease_step(moveObject g MyNorth))) 
+  else if (monsterExists g MyNorth) && (movable g MyNorth) then
+    check_win(check_die(decrease_step(moveObject g MyNorth)))
+  else if (monsterExists g MyNorth) && ((movable g MyNorth) == False) then
     check_win(check_die(decrease_step(killMonster g MyNorth)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1))))
@@ -149,8 +151,10 @@ moves MyEast g = do
   else if (V2 (x+1) y) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyEast) && (movable g MyEast) == False then g
   else if (rockExists g MyEast) && (movable g MyEast) then 
-    check_win(check_die(decrease_step(moveRock g MyEast))) 
-  else if (monsterExists g MyEast) then
+    check_win(check_die(decrease_step(moveObject g MyEast))) 
+  else if (monsterExists g MyEast) && (movable g MyEast) then
+    check_win(check_die(decrease_step(moveObject g MyEast)))
+  else if (monsterExists g MyEast) && ((movable g MyEast) == False) then
     check_win(check_die(decrease_step(killMonster g MyEast)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b)))
@@ -163,8 +167,10 @@ moves MyWest g = do
   else if (V2 (x-1) y) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyWest) && (movable g MyWest) == False then g
   else if (rockExists g MyWest) && (movable g MyWest) then 
-    check_win(check_die(decrease_step(moveRock g MyWest))) 
-  else if (monsterExists g MyWest) then
+    check_win(check_die(decrease_step(moveObject g MyWest))) 
+  else if (monsterExists g MyWest) && (movable g MyWest) then
+    check_win(check_die(decrease_step(moveObject g MyWest)))
+  else if (monsterExists g MyWest) && ((movable g MyWest) == False) then
     check_win(check_die(decrease_step(killMonster g MyWest)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b)))
@@ -177,8 +183,10 @@ moves MySouth g = do
   else if (V2 x (y-1)) `elem` (g ^. unwalkable) then g
   else if (rockExists g MySouth) && (movable g MySouth) == False then g
   else if (rockExists g MySouth) && (movable g MySouth) then 
-    check_win(check_die(decrease_step(moveRock g MySouth))) 
-  else if (monsterExists g MySouth) then
+    check_win(check_die(decrease_step(moveObject g MySouth))) 
+  else if (monsterExists g MySouth) && (movable g MySouth) then
+    check_win(check_die(decrease_step(moveObject g MySouth)))
+  else if (monsterExists g MySouth) && ((movable g MySouth) == False) then
     check_win(check_die(decrease_step(killMonster g MySouth)))
   else 
     check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1))))
@@ -304,30 +312,38 @@ movable g MyEast = do
   else True
 
 --move
-moveRock :: Game2 -> MyDirection -> Game2
-moveRock g MyNorth = do
+moveObject :: Game2 -> MyDirection -> Game2
+moveObject g MyNorth = do
   let (V2 x y) = g ^. player
-  let curr_rock = (V2 x (y+1))
+  let object = (V2 x (y+1))
   -- delete curr_rock from the list, then insert new rock location into the list
-  g & rock %~ (\list -> (V2 x (y+2)) : (delete curr_rock list))
+  if object `elem` (g ^. rock) then
+    g & rock %~ (\list -> (V2 x (y+2)) : (delete object list))
+  else g & monster %~ (\list -> (V2 x (y+2)) : (delete object list))
 
-moveRock g MySouth = do
+moveObject g MySouth = do
   let (V2 x y) = g ^. player
-  let curr_rock = (V2 x (y-1))
+  let object = (V2 x (y-1))
   -- delete curr_rock from the list, then insert new rock location into the list
-  g & rock %~ (\list -> (V2 x (y-2)) : (delete curr_rock list))
+  if object `elem` (g ^. rock) then
+    g & rock %~ (\list -> (V2 x (y-2)) : (delete object list))
+  else g & monster %~ (\list -> (V2 x (y-2)) : (delete object list))
 
-moveRock g MyEast = do
+moveObject g MyEast = do
   let (V2 x y) = g ^. player
-  let curr_rock = (V2 (x+1) y)
+  let object = (V2 (x+1) y)
   -- delete curr_rock from the list, then insert new rock location into the list
-  g & rock %~ (\list -> (V2 (x+2) y) : (delete curr_rock list))
+  if object `elem` (g ^. rock) then
+    g & rock %~ (\list -> (V2 (x+2) y) : (delete object list))
+  else g & monster %~ (\list -> (V2 (x+2) y) : (delete object list))
 
-moveRock g MyWest = do
+moveObject g MyWest = do
   let (V2 x y) = g ^. player
-  let curr_rock = (V2 (x-1) y)
+  let object = (V2 (x-1) y)
   -- delete curr_rock from the list, then insert new rock location into the list
-  g & rock %~ (\list -> (V2 (x-2) y) : (delete curr_rock list))
+  if object `elem` (g ^. rock) then
+    g & rock %~ (\list -> (V2 (x-2) y) : (delete object list))
+  else g & monster %~ (\list -> (V2 (x-2) y) : (delete object list))
 
 --delete an element from the list
 delete :: Eq a => a -> [a] -> [a]
