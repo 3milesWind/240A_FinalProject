@@ -226,10 +226,10 @@ cw = str "          \n\n\n\n\n"
 
 
 princesscw :: Widget Name
-princesscw = str "          \n\n I'm princess \n\n\n"   
+princesscw = str " --♚♚♚--||\n｜     ||\n｜ ♥ ♥ ||\n｜  - _|_|\n\n"    
 
 monstercw :: Widget Name
-monstercw = str "  ^   ^  \n -q-  -q- \n  |    |  \n    - -   \n     -    \n" 
+monstercw = str "  _   _  \n -☻-  -☻- \n  |    |  \n    ^^   \n   ▾▾▾▾  \n" 
 
 playercw :: Widget Name
 playercw = str " -------//\n｜     /./\n｜ _ _ /./\n｜  - _/_/\n\n"  
