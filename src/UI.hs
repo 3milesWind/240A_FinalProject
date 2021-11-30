@@ -162,7 +162,7 @@ princesscw :: Widget Name
 princesscw = str "          \n\n I'm princess \n\n\n"   
 
 monstercw :: Widget Name
-monstercw = str "          \n -q-  -q- \n  |    |  \n    - -   \n     -    \n" 
+monstercw = str "  ^   ^  \n -q-  -q- \n  |    |  \n    - -   \n     -    \n" 
 
 playercw :: Widget Name
 playercw = str " -------//\n｜     /./\n｜ _ _ /./\n｜  - _/_/\n\n"  
