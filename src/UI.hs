@@ -155,7 +155,7 @@ drawCell2 Rock = withAttr rockAttr cw
 drawCell2 Monster = withAttr monsterAttr cw
 
 cw :: Widget Name
-cw = str "     \n\n\n" 
+cw = str "            \n\n\n\n\n\n" 
 
 
 theMap2 :: AttrMap
