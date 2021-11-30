@@ -12,11 +12,10 @@ When the game starts, the adventurer can start to move. Each time, it can only m
 ### Princess:
 When the game starts, the princess will be some place in the game. It will never move. All it can do is to wait for adventurer
 
-### Monster: 
-In the path of saving the kidnapped princess, if the adventurer meets the monster, he can kill the monster with the cost of one step
 
-### Rock:
-It can not be destroyed, but the adventurer can push it forward one square with the cost of one step. Please notice that the wall will prevent the adventurer from continuing to push them forward.
+### Monster and Rock:
+As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster with the cost of one step(the Rock can not be destroyed).
+
 
 
 
