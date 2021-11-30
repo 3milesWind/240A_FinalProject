@@ -148,24 +148,36 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
 
 drawCell2 :: Cell2 -> Widget Name
 drawCell2 Empty2   = withAttr emptyAttr cw
-drawCell2 Player   = withAttr playerAttr cw
-drawCell2 Princess = withAttr princessAttr cw
+drawCell2 Player   = withAttr playerAttr playercw
+drawCell2 Princess = withAttr princessAttr princesscw
 drawCell2 Unwalkable = withAttr unwalkableAttr cw
-drawCell2 Rock = withAttr rockAttr cw
-drawCell2 Monster = withAttr monsterAttr cw
+drawCell2 Rock = withAttr rockAttr rockcw
+drawCell2 Monster = withAttr monsterAttr monstercw
 
 cw :: Widget Name
-cw = str "     \n\n\n" 
+cw = str "          \n\n\n\n\n" 
 
+
+princesscw :: Widget Name
+princesscw = str "          \n\n I'm princess \n\n\n"   
+
+monstercw :: Widget Name
+monstercw = str "          \n -q-  -q- \n  |    |  \n    - -   \n     -    \n" 
+
+playercw :: Widget Name
+playercw = str " -------//\n｜     /./\n｜ _ _ /./\n｜  - _/_/\n\n"  
+
+rockcw :: Widget Name
+rockcw = str "==========\n|        |\n|        |\n|        |\n==========" 
 
 theMap2 :: AttrMap
 theMap2 = attrMap V.defAttr
-  [ (playerAttr, V.white `on` V.white)
-  , (princessAttr, V.blue `on` V.blue)
+  [ (playerAttr, V.blue `on` V.white)
+  , (princessAttr, V.green `on` V.white)
   , (unwalkableAttr, V.black `on` V.black)
-  , (emptyAttr, V.red `on` V.red)
-  , (rockAttr, V.cyan `on` V.cyan)
-  , (monsterAttr, V.magenta `on` V.magenta)
+  , (emptyAttr, V.white `on` V.white)
+  , (rockAttr, V.black `on` V.white)
+  , (monsterAttr, V.red `on` V.white)
   ]
 
 gameOverAttr, gameWinAttr :: AttrName
