@@ -2,15 +2,15 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TemplateHaskell #-}
 module MyGame
-  ( initGame2
-  ,initGame3
+  ( initGame1
+  , initGame2
   , moves
   , decrease_step
   , check_die
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth
-  , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable
+  , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable, level
   ) where
 
 import Control.Applicative ((<|>))
@@ -43,6 +43,7 @@ data Game2 = Game2
   , _rock :: [Coord]
   , _monster :: [Coord]
   , _unwalkable :: [Coord]
+  , _level :: Int
   } deriving (Show)
 
 
@@ -63,9 +64,28 @@ myheight, mywidth :: Int
 myheight = 6
 mywidth = 7
 
--- Functions
 
+--fixed setup for each difficulty
+--game1
+outrange1 :: [Coord]
+outrange1 = [ (V2 0 0), (V2 1 0), (V2 2 0), (V2 3 0)
+            , (V2 2 1), (V2 3 1)
+            , (V2 2 2), (V2 3 2)
+            , (V2 2 3), (V2 3 3)
+            , (V2 2 4), (V2 0 4), (V2 0 5), (V2 5 5)
+            , (V2 6 5)
+            ]
 
+rockLocation1 :: [Coord]
+rockLocation1 = [ (V2 4 3), (V2 5 3), (V2 6 3)
+                ]
+
+monsterLocation1 :: [Coord]
+monsterLocation1 = [ (V2 5 1), (V2 6 0)
+                   , (V2 1 4)
+                   ]
+
+--game2
 outrange2 :: [Coord]
 outrange2 = [(V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2), (V2 6 2)
            ,(V2 0 3), (V2 5 3), (V2 6 3)
@@ -82,42 +102,43 @@ monsterLocation2 :: [Coord]
 monsterLocation2 = [ (V2 2 3), (V2 4 3)
                    , (V2 3 4)           
                    ]
+
+            
 -- | Step forward in time
 
-initGame2 :: IO Game2
-initGame2 = do
-  let x = 5
-      y = 5
-      g = Game2
+initGame1 :: IO Game2
+initGame1 = do
+  let g = Game2
         {
           _d = MySouth
-        , _player = (V2 x y)
+        , _player = (V2 0 1)
         , _gameOver = False
-        , _stepsRemain = 24
-        , _princess = (V2 (mywidth-1) 0)
+        , _stepsRemain = 21
+        , _princess = (V2 4 0)
         , _win = False
-        , _unwalkable = outrange2
-        , _rock = rockLocation2  
-        , _monster = monsterLocation2
+        , _unwalkable = outrange1
+        , _rock = rockLocation1  
+        , _monster = monsterLocation1
+        , _level = 1
         }
   return (execState initState g)
 
 
-initGame3 :: IO Game2
-initGame3 = do
-  let x = 0
-      y = 0
+initGame2 :: IO Game2
+initGame2 = do
+  let
       g = Game2
         {
           _d = MySouth
-        , _player = (V2 x y)
+        , _player = (V2 5 5)
         , _gameOver = False
-        , _stepsRemain = 100
-        , _princess = (V2 (mywidth-1) (myheight-1))
+        , _stepsRemain = 24
+        , _princess = (V2 6 0)
         , _win = False
         , _unwalkable = outrange2
         , _rock = rockLocation2
         , _monster = monsterLocation2
+        , _level = 2
         }
   return (execState initState g)
 

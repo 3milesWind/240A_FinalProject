@@ -59,7 +59,7 @@ tmp = do
     forkIO $ forever $ do
       writeBChan chan Tick
       threadDelay 100000 -- decides how fast your game moves
-    g <- initGame2
+    g <- initGame1
     let builder = V.mkVty V.defaultConfig
     initialVty <- builder
     void $ customMain initialVty builder (Just chan) app g
@@ -70,7 +70,7 @@ tmp2 = do
     forkIO $ forever $ do
       writeBChan chan Tick
       threadDelay 100000 -- decides how fast your game moves
-    g <- initGame3
+    g <- initGame2
     let builder = V.mkVty V.defaultConfig
     initialVty <- builder
     void $ customMain initialVty builder (Just chan) app g
@@ -88,7 +88,8 @@ handleEvent2 g (VtyEvent (V.EvKey V.KUp []))         = continue $ moves MyNorth 
 handleEvent2 g (VtyEvent (V.EvKey V.KDown []))       = continue $ moves MySouth g
 handleEvent2 g (VtyEvent (V.EvKey V.KLeft []))       = continue $ moves MyWest g
 handleEvent2 g (VtyEvent (V.EvKey V.KRight []))      = continue $ moves MyEast g
-handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (initGame2) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar '1') [])) = liftIO (initGame1) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar '2') [])) = liftIO (initGame2) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
 handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
@@ -104,9 +105,10 @@ drawStats :: Game2 -> Widget Name
 drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawQuit
-         , padTop (Pad 2) $ drawRestart
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver) (g ^. win)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
+         , padTop (Pad 2) $ drawLevel1
+         , padTop (Pad 2) $ drawLevel2
          ]
 
 
@@ -128,11 +130,15 @@ else emptyWidget
 drawQuit :: Widget Name
 drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
 
-drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
+drawLevel1 :: Widget Name
+drawLevel1 = withAttr level1 $ C.hCenter $ str "Press 1 to level1"
+
+drawLevel2 :: Widget Name
+drawLevel2 = withAttr level2 $ C.hCenter $ str "Press 2 to level2"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "Rescue Princess")   
+  $ B.borderWithLabel (str ("Rescue Princess " ++ "level: " ++ show (g ^. level)))   
   $ vBox rows
   where
     rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
@@ -187,6 +193,8 @@ monsterAttr = "monsterAttr"
 steps :: AttrName
 steps = "steps"
 
-quit, restart :: AttrName
+quit, restart, level1, level2 :: AttrName
 quit = "quit"
 restart = "restart"
+level1 = "level1"
+level2 = "level2"
