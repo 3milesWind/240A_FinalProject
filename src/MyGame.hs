@@ -79,6 +79,7 @@ outrange1 = [ (V2 0 0), (V2 1 0), (V2 2 0), (V2 3 0)
             , (V2 6 5)
             ]
 
+
 rockLocation1 :: [Coord]
 rockLocation1 = [ (V2 4 3), (V2 5 3), (V2 6 3)
                 ]
@@ -145,7 +146,6 @@ initGame1 = do
         , _level = 1
         }
   return (execState initState g)
-
 
 initGame2 :: IO Game2
 initGame2 = do

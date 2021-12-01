@@ -6,7 +6,6 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Concurrent (threadDelay, forkIO)
 import Data.Maybe (fromMaybe)
 
-import Snake
 import MyGame
 import Brick
   ( App(..), AttrMap, BrickEvent(..), EventM, Next, Widget
@@ -128,7 +127,7 @@ drawStats :: Game2 -> Widget Name
 drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawQuit
-         , padTop (Pad 2) $ drawRestart
+         , padTop (Pad 2) $ drawRestart (g ^. win)
          , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver) (g ^. win)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
          , padTop (Pad 2) $ drawLevel1 (g ^. level)
@@ -155,8 +154,12 @@ else emptyWidget
 drawQuit :: Widget Name
 drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
 
-drawRestart :: Widget Name
-drawRestart = withAttr restart $ C.hCenter $ str "Press r to restart"
+drawRestart :: Bool ->  Widget Name
+drawRestart win = 
+  if win then 
+    emptyWidget
+  else
+    withAttr restart $ C.hCenter $ str "Press r to restart"
 
 drawLevel1 :: Int ->  Widget Name
 drawLevel1 level = 
