@@ -93,6 +93,12 @@ monsterLocation1 = [ (V2 5 1), (V2 6 0)
                    , (V2 1 4)
                    ]
 
+trapLocation1 :: [Coord]
+trapLocation1 = [ (V2 1 3)
+                , (V2 3 4)
+                , (V2 4 4), (V2 4 3)
+                , (V2 5 3), (V2 5 2)
+                ]
 --leve 2
 outrange2 :: [Coord]
 outrange2 = [(V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2), (V2 6 2)
@@ -151,7 +157,7 @@ initGame1 = do
         , _key = (V2 100 100)
         , _door = (V2 101 101)
         , _unlocked = False
-        , _trap = []
+        , _trap = trapLocation1
         }
   return (execState initState g)
 
@@ -198,6 +204,8 @@ initGame3 = do
       , _trap = []
       }
   return (execState initState g)
+
+
 
 initState :: State Game2 ()
 initState = do
@@ -307,7 +315,7 @@ decrease_step g dir = do
 
 check_die :: Game2 -> Game2
 check_die g = do
-  if g ^. stepsRemain == 0 then g & gameOver %~ (\_ -> True)
+  if g ^. stepsRemain <= 0 then g & gameOver %~ (\_ -> True)
   else g
 
 check_win :: Game2 -> Game2
