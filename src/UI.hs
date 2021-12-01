@@ -238,7 +238,7 @@ monstercw :: Widget Name
 monstercw = str "  _   _  \n -☻-  -☻- \n  |    |  \n    ^^   \n   ▾▾▾▾  \n" 
 
 playercw :: Widget Name
-playercw = str " -------//\n｜     /./\n｜ _ _ /./\n｜  - _/_/\n\n"  
+playercw = str "      O   \n     /|\\ \n      |  \n     / \\\n          \n"  
 
 rockcw :: Widget Name
 rockcw = str "==========\n|        |\n|        |\n|        |\n==========" 
