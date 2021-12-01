@@ -325,18 +325,6 @@ rockExists g MyWest = do
   if (V2 (x-1) y) `elem` (g ^. rock) then True
   else False
 
-keyExists :: Game2 -> MyDirection -> Bool
-keyExists g dir = do
-  let (V2 x y) = g ^. player
-  if dir == MyWest && (V2 (x-1) y) == g ^. key
-    then True
-  else if dir == MyEast && (V2 (x+1) y) == g ^. key
-    then True
-  else if dir == MySouth && (V2 x (y-1)) == g ^. key
-    then True
-  else if dir == MyNorth && (V2 x (y+1)) == g ^. key
-    then True
-  else False
 
 monsterExists :: Game2 -> MyDirection -> Bool
 monsterExists g MyNorth = do
