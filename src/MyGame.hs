@@ -11,7 +11,7 @@ module MyGame
   , Game2(..)
   , MyDirection(..)
   , myheight, mywidth, level3_height, level3_width
-  , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable, level
+  , player, d, gameOver, stepsRemain, princess, win, rock, monster, unwalkable, level, key, treasure, treasureUnlocked, trap
   ) where
 
 import Control.Applicative ((<|>))
@@ -45,6 +45,10 @@ data Game2 = Game2
   , _monster :: [Coord]
   , _unwalkable :: [Coord]
   , _level :: Int
+  , _key :: Coord
+  , _treasure :: Coord
+  , _treasureUnlocked :: Bool
+  , _trap :: [Coord]
   } deriving (Show)
 
 
@@ -144,6 +148,10 @@ initGame1 = do
         , _rock = rockLocation1  
         , _monster = monsterLocation1
         , _level = 1
+        , _key = (V2 100 100)
+        , _treasure = (V2 101 101)
+        , _treasureUnlocked = False
+        , _trap = []
         }
   return (execState initState g)
 
@@ -162,6 +170,10 @@ initGame2 = do
         , _rock = rockLocation2
         , _monster = monsterLocation2
         , _level = 2
+        , _key = (V2 100 100)
+        , _treasure = (V2 101 101)
+        , _treasureUnlocked = False
+        , _trap = []
         }
   return (execState initState g)
 
@@ -180,6 +192,10 @@ initGame3 = do
       , _rock = rockLocation3
       , _monster = monsterLocation3
       , _level = 3
+      , _key = (V2 100 100)
+      , _treasure = (V2 101 101)
+      , _treasureUnlocked = False
+      , _trap = []
       }
   return (execState initState g)
 
@@ -198,13 +214,13 @@ moves MyNorth g = do
   else if (V2 x (y+1)) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyNorth) && (movable g MyNorth) == False then g
   else if (rockExists g MyNorth) && (movable g MyNorth) then 
-    check_win(check_die(decrease_step(moveObject g MyNorth))) 
+    check_win(check_die(decrease_step(moveObject g MyNorth) MyNorth)) 
   else if (monsterExists g MyNorth) && (movable g MyNorth) then
-    check_win(check_die(decrease_step(moveObject g MyNorth)))
+    check_win(check_die(decrease_step(moveObject g MyNorth) MyNorth))
   else if (monsterExists g MyNorth) && ((movable g MyNorth) == False) then
-    check_win(check_die(decrease_step(killMonster g MyNorth)))
+    check_win(check_die(decrease_step(killMonster g MyNorth) MyNorth))
   else 
-    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b+1))))
+    check_win ((check_die (decrease_step g MyNorth)) & player %~ (\(V2 a b) -> (V2 a (b+1))))
 
 moves MyEast g = do
   let (V2 x y) = g ^. player
@@ -215,13 +231,13 @@ moves MyEast g = do
   else if (V2 (x+1) y) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyEast) && (movable g MyEast) == False then g
   else if (rockExists g MyEast) && (movable g MyEast) then 
-    check_win(check_die(decrease_step(moveObject g MyEast))) 
+    check_win(check_die(decrease_step(moveObject g MyEast) MyEast)) 
   else if (monsterExists g MyEast) && (movable g MyEast) then
-    check_win(check_die(decrease_step(moveObject g MyEast)))
+    check_win(check_die(decrease_step(moveObject g MyEast) MyEast))
   else if (monsterExists g MyEast) && ((movable g MyEast) == False) then
-    check_win(check_die(decrease_step(killMonster g MyEast)))
+    check_win(check_die(decrease_step(killMonster g MyEast) MyEast))
   else 
-    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a+1) b)))
+    check_win ((check_die (decrease_step g MyEast)) & player %~ (\(V2 a b) -> (V2 (a+1) b)))
 
 moves MyWest g = do
   let (V2 x y) = g ^. player
@@ -231,13 +247,13 @@ moves MyWest g = do
   else if (V2 (x-1) y) `elem` (g ^. unwalkable) then g
   else if (rockExists g MyWest) && (movable g MyWest) == False then g
   else if (rockExists g MyWest) && (movable g MyWest) then 
-    check_win(check_die(decrease_step(moveObject g MyWest))) 
+    check_win(check_die(decrease_step (moveObject g MyWest) MyWest)) 
   else if (monsterExists g MyWest) && (movable g MyWest) then
-    check_win(check_die(decrease_step(moveObject g MyWest)))
+    check_win(check_die(decrease_step(moveObject g MyWest) MyWest))
   else if (monsterExists g MyWest) && ((movable g MyWest) == False) then
-    check_win(check_die(decrease_step(killMonster g MyWest)))
+    check_win(check_die(decrease_step(killMonster g MyWest) MyWest))
   else 
-    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 (a-1) b)))
+    check_win ((check_die (decrease_step g MyWest)) & player %~ (\(V2 a b) -> (V2 (a-1) b)))
 
 moves MySouth g = do
   let (V2 x y) = g ^. player
@@ -247,18 +263,29 @@ moves MySouth g = do
   else if (V2 x (y-1)) `elem` (g ^. unwalkable) then g
   else if (rockExists g MySouth) && (movable g MySouth) == False then g
   else if (rockExists g MySouth) && (movable g MySouth) then 
-    check_win(check_die(decrease_step(moveObject g MySouth))) 
+    check_win(check_die(decrease_step(moveObject g MySouth) MySouth)) 
   else if (monsterExists g MySouth) && (movable g MySouth) then
-    check_win(check_die(decrease_step(moveObject g MySouth)))
+    check_win(check_die(decrease_step(moveObject g MySouth) MySouth))
   else if (monsterExists g MySouth) && ((movable g MySouth) == False) then
-    check_win(check_die(decrease_step(killMonster g MySouth)))
+    check_win(check_die(decrease_step(killMonster g MySouth) MySouth))
   else 
-    check_win ((check_die (decrease_step g)) & player %~ (\(V2 a b) -> (V2 a (b-1))))
+    check_win ((check_die (decrease_step g MySouth)) & player %~ (\(V2 a b) -> (V2 a (b-1))))
 
 moves _ g = g
 
-decrease_step :: Game2 -> Game2
-decrease_step g =  g & stepsRemain %~ (\n -> (n-1))
+decrease_step :: Game2 -> MyDirection -> Game2
+decrease_step g dir = do
+    let (V2 x y) = g ^. player
+    if dir == MySouth && (V2 x (y-1)) `elem` g ^. trap
+     then g & stepsRemain %~ (\n -> (n-2))
+    else if dir == MyNorth && (V2 x (y+1)) `elem` g ^. trap
+     then g & stepsRemain %~ (\n -> (n-2))
+    else if dir == MyWest && (V2 (x-1) y) `elem` g ^. trap
+      then g & stepsRemain %~ (\n -> (n-2))
+    else if dir == MyEast && (V2 (x+1) y) `elem` g ^. trap
+      then g & stepsRemain %~ (\n -> (n-2))
+    else
+      g & stepsRemain %~ (\n -> (n-1))
 
 check_die :: Game2 -> Game2
 check_die g = do
@@ -347,6 +374,9 @@ movable g MyNorth = do
   else if (V2 x (y+2)) `elem` (g ^. monster) then False
   else if (V2 x (y+2)) `elem` (g ^. unwalkable) then False
   else if (V2 x (y+2)) == (g ^. princess) then False 
+  else if (V2 x (y+2)) == (g ^. key) then False
+  else if (V2 x (y+2)) == (g ^. treasure) then False
+  else if (V2 x (y+2)) `elem` (g ^. trap) then False
   else True
 
 movable g MySouth = do
@@ -356,7 +386,10 @@ movable g MySouth = do
   else if (V2 x (y-2)) `elem` (g ^. rock) then False
   else if (V2 x (y-2)) `elem` (g ^. monster) then False
   else if (V2 x (y-2)) `elem` (g ^. unwalkable) then False
-  else if (V2 x (y-2)) == (g ^. princess) then False 
+  else if (V2 x (y-2)) == (g ^. princess) then False
+  else if (V2 x (y-2)) == (g ^. key) then False
+  else if (V2 x (y-2)) == (g ^. treasure) then False
+  else if (V2 x (y-2)) `elem` (g ^. trap) then False
   else True
 
 movable g MyWest = do
@@ -367,6 +400,9 @@ movable g MyWest = do
   else if (V2 (x-2) y) `elem` (g ^. monster) then False
   else if (V2 (x-2) y) `elem` (g ^. unwalkable) then False
   else if (V2 (x-2) y) == (g ^. princess) then False 
+  else if (V2 (x-2) y) == (g ^. key) then False
+  else if (V2 (x-2) y) == (g ^. treasure) then False
+  else if (V2 (x-2) y) `elem` (g ^. trap) then False
   else True
 
 movable g MyEast = do
@@ -377,6 +413,9 @@ movable g MyEast = do
   else if (V2 (x+2) y) `elem` (g ^. monster) then False
   else if (V2 (x+2) y) `elem` (g ^. unwalkable) then False
   else if (V2 (x+2) y) == (g ^. princess) then False 
+  else if (V2 (x+2) y) == (g ^. key) then False
+  else if (V2 (x+2) y) == (g ^. treasure) then False
+  else if (V2 (x+2) y) `elem` (g ^. trap) then False
   else True
 
 --move

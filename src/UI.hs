@@ -39,7 +39,7 @@ data Tick = Tick
 type Name = ()
 
 
-data Cell2 = Empty2 | Player | Princess | Unwalkable | Rock | Monster
+data Cell2 = Empty2 | Player | Princess | Unwalkable | Rock | Monster | Trap
 
 -- App definition
 
@@ -214,6 +214,7 @@ drawGameLevel3 g =  withBorderStyle BS.unicodeBold
       | cell `elem` (g ^. unwalkable) = Unwalkable
       | cell `elem` (g ^. rock)       = Rock
       | cell `elem` (g ^. monster)    = Monster
+      | cell `elem` (g ^. trap)       = Trap
       | otherwise                     = Empty2
 
 drawCell2 :: Cell2 -> Widget Name
@@ -223,6 +224,7 @@ drawCell2 Princess = withAttr princessAttr princesscw
 drawCell2 Unwalkable = withAttr unwalkableAttr cw
 drawCell2 Rock = withAttr rockAttr rockcw
 drawCell2 Monster = withAttr monsterAttr monstercw
+drawCell2 Trap = withAttr trapAttr cw
 
 cw :: Widget Name
 cw = str "          \n\n\n\n\n" 
@@ -248,6 +250,7 @@ theMap2 = attrMap V.defAttr
   , (emptyAttr, V.white `on` V.white)
   , (rockAttr, V.black `on` V.white)
   , (monsterAttr, V.red `on` V.white)
+  , (trapAttr, V.cyan `on` V.cyan)
   ]
 
 gameOverAttr, gameWinAttr :: AttrName
@@ -259,12 +262,13 @@ snakeAttr = "snakeAttr"
 foodAttr = "foodAttr"
 emptyAttr = "emptyAttr"
 
-playerAttr, princessAttr, unwalkableAttr, rockAttr, monsterAttr :: AttrName
+playerAttr, princessAttr, unwalkableAttr, rockAttr, monsterAttr, trapAttr :: AttrName
 playerAttr = "playerAttr"
 princessAttr = "princessAttr"
 unwalkableAttr = "unwalkableAttr"
 rockAttr = "rockAttr"
 monsterAttr = "monsterAttr"
+trapAttr = "trapAttr"
 
 steps :: AttrName
 steps = "steps"
