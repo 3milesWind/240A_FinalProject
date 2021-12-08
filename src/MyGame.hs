@@ -168,6 +168,9 @@ monsterLocation5 = [ (V2 0 3), (V2 1 3), (V2 2 3), (V2 3 3), (V2 4 3), (V2 5 3)
 rockLocation5 :: [Coord]
 rockLocation5 = [ (V2 1 2), (V2 2 2), (V2 3 2), (V2 4 2), (V2 5 2)]
 
+trapLocation5:: [Coord]
+trapLocation5 = [(V2 5 3)]
+
 initGame1 :: IO Game2
 initGame1 = do
   let g = Game2
@@ -251,14 +254,14 @@ initGame5 = do
         _d = MySouth
       , _player = (V2 0 2)
       , _gameOver = False
-      , _stepsRemain = 45
+      , _stepsRemain =1000
       , _princess = (V2 6 2)
       , _win = False
       , _unwalkable = outrange5
       , _rock = rockLocation5
       , _monster = monsterLocation5
       , _level = 5
-      , _trap = []
+      , _trap = trapLocation5
       }
   return (execState initState g)
 
