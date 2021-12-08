@@ -6,7 +6,6 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Concurrent (threadDelay, forkIO)
 import Data.Maybe (fromMaybe)
 
-import Snake
 import MyGame
 import Brick
   ( App(..), AttrMap, BrickEvent(..), EventM, Next, Widget
