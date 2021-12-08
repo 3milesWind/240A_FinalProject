@@ -117,6 +117,23 @@ monsterLocation2 = [ (V2 2 3), (V2 4 3)
                    , (V2 3 4)           
                    ]
 
+--leve 6
+outrange6 :: [Coord]
+outrange6 = [(V2 0 0), (V2 0 4), (V2 0 5), (V2 1 0), (V2 1 4), (V2 1 5),
+              (V2 2 4), (V2 2 5), (V2 3 0), (V2 3 5), (V2 4 0),
+           (V2 4 2), (V2 5 0), (V2 6 0), (V2 6 1), (V2 6 2), (V2 6 5), (V2 6 3)
+           ]
+
+rockLocation6 :: [Coord]
+rockLocation6 = [ (V2 1 1), (V2 1 2)
+               , (V2 1 3), (V2 3 2), (V2 4 3), (V2 5 3)
+               ]
+
+monsterLocation6 :: [Coord]
+monsterLocation6 = [ (V2 4 1), (V2 5 5)
+                     
+                   ]
+
 --level 3 
 outrange3 :: [Coord]
 outrange3 = [ (V2 0 0), (V2 0 3)
@@ -272,15 +289,15 @@ initGame6 = do
       g = Game2
         {
           _d = MySouth
-        , _player = (V2 5 5)
+        , _player = (V2 0 1)
         , _gameOver = False
-        , _stepsRemain = 24
-        , _princess = (V2 6 0)
+        , _stepsRemain = 100
+        , _princess = (V2 6 4)
         , _win = False
-        , _unwalkable = outrange2
-        , _rock = rockLocation2
-        , _monster = monsterLocation2
-        , _level = 2
+        , _unwalkable = outrange6
+        , _rock = rockLocation6
+        , _monster = monsterLocation6
+        , _level = 6
         , _trap = []
         }
   return (execState initState g)
