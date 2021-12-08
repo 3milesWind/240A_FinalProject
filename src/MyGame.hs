@@ -133,6 +133,8 @@ monsterLocation6 :: [Coord]
 monsterLocation6 = [ (V2 4 1), (V2 5 5)
                      
                    ]
+trapLocation6:: [Coord]
+trapLocation6 = [(V2 1 2), (V2 1 3)]
 
 --level 3 
 outrange3 :: [Coord]
@@ -291,14 +293,14 @@ initGame6 = do
           _d = MySouth
         , _player = (V2 0 1)
         , _gameOver = False
-        , _stepsRemain = 100
+        , _stepsRemain = 29
         , _princess = (V2 6 4)
         , _win = False
         , _unwalkable = outrange6
         , _rock = rockLocation6
         , _monster = monsterLocation6
         , _level = 6
-        , _trap = []
+        , _trap = trapLocation6
         }
   return (execState initState g)
 
