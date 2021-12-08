@@ -6,7 +6,6 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Concurrent (threadDelay, forkIO)
 import Data.Maybe (fromMaybe)
 
-import Snake
 import MyGame
 import Brick
   ( App(..), AttrMap, BrickEvent(..), EventM, Next, Widget
@@ -40,7 +39,7 @@ data Tick = Tick
 type Name = ()
 
 
-data Cell2 = Empty2 | Player | Princess | Unwalkable | Rock
+data Cell2 = Empty2 | Player | Princess | Unwalkable | Rock | Monster
 
 -- App definition
 
@@ -105,7 +104,7 @@ drawStats g = hLimit 20
   $ vBox [ drawSteps (g ^. stepsRemain)
          , padTop (Pad 2) $ drawQuit
          , padTop (Pad 2) $ drawRestart
-         , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver)
+         , padTop (Pad 2) $ drawGameOver2 (g ^. gameOver) (g ^. win)
          , padTop (Pad 2) $ drawGameWin (g ^. win)
          ]
 
@@ -113,17 +112,17 @@ drawStats g = hLimit 20
 drawSteps :: Int -> Widget Name
 drawSteps n = withAttr steps $ C.hCenter $ str ("Steps: " ++ (show n))
 
-drawGameOver2 :: Bool -> Widget Name
-drawGameOver2 dead =
-  if dead
+drawGameOver2 :: Bool -> Bool -> Widget Name
+drawGameOver2 dead win =
+  if dead && (win == False)
      then withAttr gameOverAttr $ C.hCenter $ str "GAME OVER"
-     else emptyWidget
+  else emptyWidget
 
 drawGameWin :: Bool -> Widget Name
 drawGameWin win =
   if win
     then withAttr gameWinAttr $ C.hCenter $ str "Success!"
-    else emptyWidget
+else emptyWidget
 
 drawQuit :: Widget Name
 drawQuit = withAttr quit $ C.hCenter $ str "Press q to quit"
@@ -132,7 +131,7 @@ drawRestart = withAttr restart $ C.hCenter $ str "Pree r to restart"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g = withBorderStyle BS.unicodeBold
-  $ B.borderWithLabel (str "MyGame")   
+  $ B.borderWithLabel (str "Rescue Princess")   
   $ vBox rows
   where
     rows = [hBox (cellsInRow r) | r <- [myheight - 1, myheight - 2 .. 0]]
@@ -143,6 +142,7 @@ drawGrid2 g = withBorderStyle BS.unicodeBold
       | cell == (g ^. princess)       = Princess
       | cell `elem` (g ^. unwalkable) = Unwalkable
       | cell `elem` (g ^. rock)       = Rock
+      | cell `elem` (g ^. monster)    = Monster
       | otherwise                     = Empty2
 
 drawCell2 :: Cell2 -> Widget Name
@@ -151,10 +151,10 @@ drawCell2 Player   = withAttr playerAttr cw
 drawCell2 Princess = withAttr princessAttr cw
 drawCell2 Unwalkable = withAttr unwalkableAttr cw
 drawCell2 Rock = withAttr rockAttr cw
-
+drawCell2 Monster = withAttr monsterAttr cw
 
 cw :: Widget Name
-cw = str "  "
+cw = str "     \n\n\n" 
 
 
 theMap2 :: AttrMap
@@ -164,6 +164,7 @@ theMap2 = attrMap V.defAttr
   , (unwalkableAttr, V.black `on` V.black)
   , (emptyAttr, V.red `on` V.red)
   , (rockAttr, V.cyan `on` V.cyan)
+  , (monsterAttr, V.magenta `on` V.magenta)
   ]
 
 gameOverAttr, gameWinAttr :: AttrName
@@ -175,11 +176,12 @@ snakeAttr = "snakeAttr"
 foodAttr = "foodAttr"
 emptyAttr = "emptyAttr"
 
-playerAttr, princessAttr, unwalkableAttr, rockAttr :: AttrName
+playerAttr, princessAttr, unwalkableAttr, rockAttr, monsterAttr :: AttrName
 playerAttr = "playerAttr"
 princessAttr = "princessAttr"
 unwalkableAttr = "unwalkableAttr"
 rockAttr = "rockAttr"
+monsterAttr = "monsterAttr"
 
 steps :: AttrName
 steps = "steps"
