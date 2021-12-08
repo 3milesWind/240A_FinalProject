@@ -132,6 +132,8 @@ handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO (handleRestart g) 
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '1') [])) = liftIO (initGame1) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '2') [])) = liftIO (initGame2) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '3') [])) = liftIO (initGame3) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar '4') [])) = liftIO (initGame4) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar '5') [])) = liftIO (initGame5) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
 handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
