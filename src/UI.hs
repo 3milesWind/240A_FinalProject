@@ -107,6 +107,16 @@ tmp5 = do
     initialVty <- builder
     void $ customMain initialVty builder (Just chan) app g
 
+tmp6:: IO ()
+tmp6 = do
+    chan <- newBChan 10
+    forkIO $ forever $ do
+      writeBChan chan Tick
+      threadDelay 100000 -- decides how fast your game moves
+    g <- initGame6
+    let builder = V.mkVty V.defaultConfig
+    initialVty <- builder
+    void $ customMain initialVty builder (Just chan) app g
 
 main2 :: Int -> IO ()
 main2 int= if int ==1 
@@ -117,8 +127,10 @@ main2 int= if int ==1
              then tmp3
            else if int == 4
              then tmp4
+            else if int == 5
+             then tmp5
             else
-              tmp5
+              tmp6
             
 
 -- Handling events
@@ -134,6 +146,7 @@ handleEvent2 g (VtyEvent (V.EvKey (V.KChar '2') [])) = liftIO (initGame2) >>= co
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '3') [])) = liftIO (initGame3) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '4') [])) = liftIO (initGame4) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar '5') [])) = liftIO (initGame5) >>= continue
+handleEvent2 g (VtyEvent (V.EvKey (V.KChar '6') [])) = liftIO (initGame6) >>= continue
 handleEvent2 g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
 handleEvent2 g (VtyEvent (V.EvKey V.KEsc []))        = halt g
 handleEvent2 g _                                     = continue g  
@@ -148,8 +161,10 @@ handleRestart g =
     then initGame3
   else if g ^. level == 4
     then initGame4
+  else if g ^. level == 5
+    then initGame5
   else
-     initGame5
+     initGame6
 -- Drawing
 
 drawUI :: Game2 -> [Widget Name]
@@ -170,6 +185,7 @@ drawStats g = hLimit 20
          , padTop (Pad 2) $ drawLevel3 (g ^. level)
          , padTop (Pad 2) $ drawLevel4 (g ^. level)
          , padTop (Pad 2) $ drawLevel5 (g ^. level)
+         ,  padTop (Pad 2) $ drawLevel6 (g ^. level)
          ]
 
 
@@ -220,13 +236,19 @@ drawLevel4 :: Int -> Widget Name
 drawLevel4 level =
   if level == 4
     then emptyWidget
-  else withAttr level4 $ C.hCenter $ str "Press 4 to do Testing"
+  else withAttr level4 $ C.hCenter $ str "Press 4 to level4"
 
 drawLevel5 :: Int -> Widget Name
 drawLevel5 level =
   if level == 5
     then emptyWidget
-  else withAttr level5 $ C.hCenter $ str "Press 5 to do Testing"
+  else withAttr level5 $ C.hCenter $ str "Press 5 to level5"
+
+drawLevel6 :: Int -> Widget Name
+drawLevel6 level =
+  if level == 6
+    then emptyWidget
+  else withAttr level5 $ C.hCenter $ str "Press 6 to level6"
 
 drawGrid2 :: Game2 -> Widget Name
 drawGrid2 g =

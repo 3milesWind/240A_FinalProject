@@ -27,11 +27,11 @@ ui =
     $ withBorderStyle BS.unicodeBold
     $ B.borderWithLabel (str "Save the princess")
     $ C.center
-    $ str " Choose Level (1-5)"
+    $ str " Choose Level (1-6)"
 
 handleEvent :: Maybe Int -> BrickEvent () e -> EventM () (Next (Maybe Int))
 handleEvent n (VtyEvent (V.EvKey (V.KChar d) [])) =
-  if d `elem` ['1' .. '5']
+  if d `elem` ['1' .. '6']
   then halt $ Just (read [d])
   else continue n
 handleEvent n _ = continue n

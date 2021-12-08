@@ -7,6 +7,7 @@ module MyGame
   , initGame3
   , initGame4
   , initGame5
+  , initGame6
   , moves
   , decrease_step
   , check_die
@@ -263,6 +264,25 @@ initGame5 = do
       , _level = 5
       , _trap = trapLocation5
       }
+  return (execState initState g)
+
+initGame6 :: IO Game2
+initGame6 = do
+  let
+      g = Game2
+        {
+          _d = MySouth
+        , _player = (V2 5 5)
+        , _gameOver = False
+        , _stepsRemain = 24
+        , _princess = (V2 6 0)
+        , _win = False
+        , _unwalkable = outrange2
+        , _rock = rockLocation2
+        , _monster = monsterLocation2
+        , _level = 2
+        , _trap = []
+        }
   return (execState initState g)
 
 initState :: State Game2 ()
