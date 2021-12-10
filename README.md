@@ -6,7 +6,7 @@ stack build <br />
 stack run <br />
 # Demo
 
-<div align=center><img width="300" height="300" src="https://github.com/3milesWind/CSE230_FinalProject/blob/main/demo/demo.png"/></div>
+<div align=center><img width="400" height="350" src="https://github.com/3milesWind/CSE230_FinalProject/blob/main/demo/demo.png"/></div>
 
 # Descriptions: 
 
