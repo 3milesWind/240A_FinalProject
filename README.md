@@ -6,16 +6,18 @@ You are an adventurer. You need to set off from the castle to save the kidnapped
 
 In the game, there will be four elements: adventurer(you), princess, monster and rocks. 
 
-### Adventurer:
+### Player:
 When the game starts, the adventurer can start to move. Each time, it can only move one step. 
 
 ### Princess:
 When the game starts, the princess will be some place in the game. It will never move. All it can do is to wait for adventurer
 
 
-### Monster, Rock and Trap:
-As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster with the cost of one step(the Rock can not be destroyed). For the trap, if the adventurer stand on it, it decrease step by 2
+### Monster, Rock:
+As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster with the cost of one step(the Rock can not be destroyed). 
 
+### Trap:
+The trap may be hidden under other elements(rock, monster...). If the adventurer step onto it,  the step will be decreased by 2
 
 
 
