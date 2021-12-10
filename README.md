@@ -13,8 +13,9 @@ When the game starts, the adventurer can start to move. Each time, it can only m
 When the game starts, the princess will be some place in the game. It will never move. All it can do is to wait for adventurer
 
 
-### Monster and Rock:
-As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster with the cost of one step(the Rock can not be destroyed).
+### Monster, Rock and Trap:
+As for Monster and Rock, when they are not by the wall, the adventurer can push them forward one square with the cost of one step. When they are by the wall, the wall will prevent the adventurer from continuing to push them forward. However, in this kind of situation, the adventurer can kill the Monster with the cost of one step(the Rock can not be destroyed). For the trap, if the adventurer stand on it, it decrease step by 2
+
 
 
 
@@ -36,18 +37,6 @@ Jiaen Yu, jiy037@ucsd.edu, yujiaen1999  <br />
 
 # Github Repository Link: 
 https://github.com/3milesWind/CSE230_FinalProject
-
-# Game design:
-Game {
-    _steps_remain :: Int
-    _princess :: Coord
-    _monster :: Coord
-    _rock :: Rock
-    _dir :: Direction
-    _dead :: Bool
-    _player :: Coord
-    
-}
 
 
 # Milestone 2:
