@@ -1,5 +1,10 @@
 CSE230 Project Proposal
 
+# How to run this game
+In the root of this project <br />
+stack build <br />
+stack run <br />
+
 # Descriptions: 
 
 You are an adventurer. You need to set off from the castle to save the kidnapped princess. Because the situation is very urgent, you have to get there in a certain number of steps. You might meet monsters and rocks on the way. You can kill monsters and move rocks(rocks can't be destroyed), but these operations will also consume a few steps. If you fail to save the princess before using up all the steps, then you lose, otherwise you win. 
