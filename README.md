@@ -6,7 +6,7 @@ stack build <br />
 stack run <br />
 # Demo
 
-![game](https://github.com/3milesWind/CSE230_FinalProject/blob/main/demo/demo.png "game")
+<div align=center><img width="150" height="150" src="https://github.com/3milesWind/CSE230_FinalProject/blob/main/demo/demo.png"/></div>
 
 # Descriptions: 
 
